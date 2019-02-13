@@ -33,6 +33,10 @@ function initHttpServer() {
             res.send();
         });
     */
+    app.get("/message", function (req, res) {
+        res.send(message);
+    });
+
     /**
      * POST example
      */
@@ -41,9 +45,9 @@ function initHttpServer() {
             res.send();
         });
     */
-
-    app.get("/message", function (req, res) {
-        res.send(message);
+    app.post("/stop", function (req, res) {
+        res.send({ "msg": "Stopping server\n" });
+        process.exit();
     });
 
     app.listen(http_port, function () { console.log("Listening http port on: " + http_port) });
