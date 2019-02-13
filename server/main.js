@@ -37,7 +37,9 @@ function initHttpServer() {
     */
     app.get("/stack", function (req, res) {
         if (stack == -1) {
-            res.send("MUST SET STACK FIRST.\n");
+            res.send({
+                "msg": "MUST SET STACK FIRST.\n"
+            });
         }
         else {
             res.send({
@@ -48,7 +50,9 @@ function initHttpServer() {
 
     app.get("/timer", function (req, res) {
         if (timer == -1) {
-            res.send("MUST SET TIMER FIRST.\n");
+            res.send({
+                "msg": "MUST SET TIMER FIRST.\n"
+            });
         }
         else {
             var remain = timer - (getCurrentTimestamp() - startTime);
@@ -72,7 +76,9 @@ function initHttpServer() {
     app.post("/setStack", function (req, res) {
         stack = req.body.stack;
         
-        res.send();
+        res.send({
+            "msg": "SUCESSFULLY SET STACK.\n"
+        });
     });
 
     app.post("/setTimer", function (req, res) {
@@ -84,7 +90,25 @@ function initHttpServer() {
             process.exit();
         }, timer);
 
-        res.send();
+        res.send({
+            "msg": "SUCESSFULLY SET TIMER.\n"
+        });
+    });
+
+    app.post("/purchase", function (req, res) {
+        var amount = req.body.amount;
+        if (amount <= 0 || stack - amount < 0) {
+            res.send({
+                "msg": "INVALID AMOUNT.\n"
+            });
+        }
+        else {
+            stack -= amount;
+
+            res.send({
+                "msg": "SUCESSFULLY PURCHASE.\n"
+            });
+        }
     });
 
     app.post("/stop", function (req, res) {
