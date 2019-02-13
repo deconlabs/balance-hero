@@ -6,7 +6,7 @@ cd server/
 npm install
 ```
 
-## Change Port#
+# Change Port#
 Default port# is ```3000```.
 
 ```bash
@@ -25,6 +25,11 @@ npm start
 # Get Message
 ```bash
 curl localhost:3000/message
+```
+
+# Stop Server
+```bash
+curl -X POST localhost:3000/stop
 ```
 
 # Cleanup
