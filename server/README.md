@@ -47,7 +47,7 @@ curl -H "Content-type:application/json" --data "{\"stack\" : 100}" http://127.0.
 curl -H "Content-type:application/json" --data "{\"timer\" : 10000}" http://127.0.0.1:3000/setTimer
 ```
 
-## PURCHASE
+## Purchase
 ```bash
 curl -H "Content-type:application/json" --data "{\"amount\" : 11}" http://127.0.0.1:3000/purchase
 ```
