@@ -87,7 +87,9 @@ function initHttpServer() {
 
         setTimeout(function () {
             console.log("Stopping server\n");
-            process.exit();
+            // process.exit();
+            timer = -1;
+            startTime = -1;
         }, timer);
 
         res.send({
@@ -96,18 +98,25 @@ function initHttpServer() {
     });
 
     app.post("/purchase", function (req, res) {
-        var amount = req.body.amount;
-        if (amount <= 0 || stack - amount < 0) {
+        if (timer == -1) {
             res.send({
-                "msg": "INVALID AMOUNT.\n"
+                "msg": "MUST SET TIMER FIRST.\n"
             });
         }
         else {
-            stack -= amount;
+            var amount = req.body.amount;
+            if (amount <= 0 || stack - amount < 0) {
+                res.send({
+                    "msg": "INVALID AMOUNT.\n"
+                });
+            }
+            else {
+                stack -= amount;
 
-            res.send({
-                "msg": "SUCESSFULLY PURCHASE.\n"
-            });
+                res.send({
+                    "msg": "SUCESSFULLY PURCHASE.\n"
+                });
+            }
         }
     });
 
