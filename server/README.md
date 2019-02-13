@@ -1,4 +1,6 @@
-# Preconditions
+# How to Use
+
+## Preconditions
 ```bash
 cd server/
 ```
@@ -6,8 +8,8 @@ cd server/
 npm install
 ```
 
-# Change Port#
-Default port# is ```3000```.
+## Change Port#
+* Default port# is ```3000```.
 
 ```bash
 export HTTP_PORT=3001
@@ -17,22 +19,45 @@ export HTTP_PORT=3001
 env:HTTP_PORT=3001
 ```
 
-# Run Server
+## Run Server
 ```bash
 npm start
 ```
 
-# Get Message
+## Get Stack
 ```bash
-curl localhost:3000/message
+curl localhost:3000/stack
 ```
 
-# Stop Server
+## Get Timer
+* UNIX timestamp.   
+* Return setting value, start time, and time remaining.
+```bash
+curl localhost:3000/timer
+```
+
+## Set Stack
+```bash
+curl -H "Content-type:application/json" --data "{\"stack\" : 100}" http://127.0.0.1:3000/setStack
+```
+
+## Set Timer
+* milli-seconds
+```bash
+curl -H "Content-type:application/json" --data "{\"timer\" : 10000}" http://127.0.0.1:3000/setTimer
+```
+
+## PURCHASE
+```bash
+curl -H "Content-type:application/json" --data "{\"amount\" : 11}" http://127.0.0.1:3000/purchase
+```
+
+## Stop Server
 ```bash
 curl -X POST localhost:3000/stop
 ```
 
-# Cleanup
+## Cleanup
 ```bash
 sh cleanup.sh
 ```
