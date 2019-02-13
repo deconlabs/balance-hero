@@ -9,7 +9,7 @@ npm install
 ```
 
 ## Change Port#
-Default port# is ```3000```.
+* Default port# is ```3000```.
 
 ```bash
 export HTTP_PORT=3001
@@ -30,6 +30,8 @@ curl localhost:3000/stack
 ```
 
 ## Get Timer
+* UNIX timestamp.   
+* Return setting value, start time, and time remaining.
 ```bash
 curl localhost:3000/timer
 ```
@@ -40,9 +42,14 @@ curl -H "Content-type:application/json" --data "{\"stack\" : 100}" http://127.0.
 ```
 
 ## Set Timer
-milli-seconds
+* milli-seconds
 ```bash
 curl -H "Content-type:application/json" --data "{\"timer\" : 10000}" http://127.0.0.1:3000/setTimer
+```
+
+## PURCHASE
+```bash
+curl -H "Content-type:application/json" --data "{\"amount\" : 11}" http://127.0.0.1:3000/purchase
 ```
 
 ## Stop Server
