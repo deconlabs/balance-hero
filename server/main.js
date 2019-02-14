@@ -112,8 +112,8 @@ function initHttpServer() {
             var amount = req.body.amount;
             if (amount <= 0 || stack - amount < 0) { res.send({ "msg": "INVALID AMOUNT.\n" }); }
             else {
-                var agentId = req.body.id || -1;
-                if (agentId == -1) { res.send({ "msg": "INVALID ID.\n" }); }
+                var agentId = req.body.id;
+                if (agentId == undefined) { res.send({ "msg": "INVALID ID.\n" }); }
                 else {
                     orders.push({
                         "id": agentId,
