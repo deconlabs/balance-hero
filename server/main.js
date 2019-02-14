@@ -99,7 +99,7 @@ function initHttpServer() {
         if (timer != -1) { isAlive = true; }
 
         res.send({
-            "msg": "SUCESSFULLY SET STACK.\n"
+            "msg": "SUCCESSFULLY SET STACK.\n"
         });
     });
 
@@ -120,7 +120,7 @@ function initHttpServer() {
         }, timer);
 
         res.send({
-            "msg": "SUCESSFULLY SET TIMER.\n"
+            "msg": "SUCCESSFULLY SET TIMER.\n"
         });
     });
 
@@ -147,7 +147,7 @@ function initHttpServer() {
                     }
 
                     res.send({
-                        "msg": "SUCESSFULLY PURCHASE.\n"
+                        "msg": "SUCCESSFULLY PURCHASE.\n"
                     });
                 }
             }
