@@ -40,6 +40,37 @@ curl localhost:3000/timer
 ```bash
 curl localhost:3000/orderBook
 ```
+You can pretty-print JSON with:
+```bash
+curl http://127.0.0.1:3000/orderBook | python -m json.tool
+```
+* result: 
+```JSON
+{
+    "orderBook": [
+        {
+            "amount": 11,
+            "id": 2,
+            "when": 100
+        },
+        {
+            "amount": 7,
+            "id": 0,
+            "when": 89
+        },
+        {
+            "amount": 32,
+            "id": 1,
+            "when": 82
+        },
+        {
+            "amount": 32,
+            "id": 1,
+            "when": 50
+        }
+    ]
+}
+```
 
 ## Set Stack
 ```bash
