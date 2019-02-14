@@ -36,6 +36,11 @@ curl localhost:3000/stack
 curl localhost:3000/timer
 ```
 
+## Get Orderbook
+```bash
+curl localhost:3000/orderBook
+```
+
 ## Set Stack
 ```bash
 curl -H "Content-type:application/json" --data "{\"stack\" : 100}" http://127.0.0.1:3000/setStack
@@ -49,7 +54,14 @@ curl -H "Content-type:application/json" --data "{\"timer\" : 10000}" http://127.
 
 ## Purchase
 ```bash
-curl -H "Content-type:application/json" --data "{\"amount\" : 11}" http://127.0.0.1:3000/purchase
+curl -H "Content-type:application/json" --data "{\"id\" : 2, \"amount\" : 11}" http://127.0.0.1:3000/purchase
+```
+
+## Reset
+* reset stacks
+* reset (cancel) timer
+```bash
+curl -X POST localhost:3000/stop
 ```
 
 ## Stop Server
