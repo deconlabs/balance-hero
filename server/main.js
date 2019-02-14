@@ -22,6 +22,9 @@ const http_port = process.env.HTTP_PORT || 3000;
 var stack = -1;
 var timer = -1;  // milli-secs
 var startTime = -1;
+var t;  // setTimeout()
+
+var orders = [];  // [{"id": 0, "when": 90, "amount": 10}, ...]
 
 function initHttpServer() {
     const app = express();
@@ -65,6 +68,12 @@ function initHttpServer() {
         }
     });
 
+    app.get("/orderBook", function (req, res) {
+        res.send({
+            "orderBook": orders
+        });
+    });
+
     /**
      * POST example
      */
@@ -85,7 +94,7 @@ function initHttpServer() {
         timer = req.body.timer;
         startTime = getCurrentTimestamp();
 
-        setTimeout(function () {
+        t = setTimeout(function () {
             console.log("Stopping server\n");
             // process.exit();
             timer = -1;
@@ -98,26 +107,40 @@ function initHttpServer() {
     });
 
     app.post("/purchase", function (req, res) {
-        if (timer == -1) {
-            res.send({
-                "msg": "MUST SET TIMER FIRST.\n"
-            });
-        }
+        if (timer == -1) { res.send({ "msg": "MUST SET TIMER FIRST.\n" });}
         else {
             var amount = req.body.amount;
-            if (amount <= 0 || stack - amount < 0) {
-                res.send({
-                    "msg": "INVALID AMOUNT.\n"
-                });
-            }
+            if (amount <= 0 || stack - amount < 0) { res.send({ "msg": "INVALID AMOUNT.\n" }); }
             else {
-                stack -= amount;
+                var agentId = req.body.id || -1;
+                if (agentId == -1) { res.send({ "msg": "INVALID ID.\n" }); }
+                else {
+                    orders.push({
+                        "id": agentId,
+                        "when": stack,
+                        "amount": amount
+                    });
 
-                res.send({
-                    "msg": "SUCESSFULLY PURCHASE.\n"
-                });
+                    stack -= amount;
+
+                    res.send({
+                        "msg": "SUCESSFULLY PURCHASE.\n"
+                    });
+                }
             }
         }
+    });
+
+    app.post("/reset", function (req, res) {
+        stack = -1;
+
+        clearTimeout(t);
+        timer = -1;
+        startTime = -1;
+
+        res.send({
+            "msg": "SUCCESSFULLY RESET.\n"
+        });
     });
 
     app.post("/stop", function (req, res) {
