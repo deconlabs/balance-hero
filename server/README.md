@@ -76,7 +76,7 @@ curl http://127.0.0.1:3000/orderBook | python -m json.tool
 * isAlive: ```true``` when episode runs, ```false``` otherwise.
 * isSuccess: ```true``` when ```stack==0 && isAlive```, ```false``` otherwise.
 ```bash
-curl localhost:3000/stack
+curl localhost:3000/status
 ```
 
 ## Set Stack
