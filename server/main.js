@@ -20,11 +20,15 @@ const http_port = process.env.HTTP_PORT || 3000;
 */
 
 var stack = -1;
+
 var timer = -1;  // milli-secs
 var startTime = -1;
 var t;  // setTimeout()
 
 var orders = [];  // [{"id": 0, "when": 90, "amount": 10}, ...]
+
+var isAlive = false;
+var isSuccess = false;
 
 function initHttpServer() {
     const app = express();
@@ -74,6 +78,13 @@ function initHttpServer() {
         });
     });
 
+    app.get("/status", function (req, res) {
+        res.send({
+            "isAlive": isAlive,
+            "isSuccess": isSuccess
+        });
+    });
+
     /**
      * POST example
      */
@@ -85,6 +96,8 @@ function initHttpServer() {
     app.post("/setStack", function (req, res) {
         stack = req.body.stack;
         
+        if (timer != -1) { isAlive = true; }
+
         res.send({
             "msg": "SUCESSFULLY SET STACK.\n"
         });
@@ -94,11 +107,16 @@ function initHttpServer() {
         timer = req.body.timer;
         startTime = getCurrentTimestamp();
 
+        if (stack != -1) { isAlive = true; }
+
         t = setTimeout(function () {
             console.log("Stopping server\n");
             // process.exit();
             timer = -1;
             startTime = -1;
+            isAlive = false;
+            
+            if (stack == 0) { isSuccess = true; }
         }, timer);
 
         res.send({
@@ -123,6 +141,11 @@ function initHttpServer() {
 
                     stack -= amount;
 
+                    if (stack == 0 && timer != -1) {
+                        isAlive = false;
+                        isSuccess = true;
+                    }
+
                     res.send({
                         "msg": "SUCESSFULLY PURCHASE.\n"
                     });
@@ -137,6 +160,11 @@ function initHttpServer() {
         clearTimeout(t);
         timer = -1;
         startTime = -1;
+
+        orders = [];
+
+        isAlive = false;
+        isSuccess = false;
 
         res.send({
             "msg": "SUCCESSFULLY RESET.\n"
