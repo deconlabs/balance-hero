@@ -13,6 +13,7 @@ class Master:
 
     def add_agent(self, agent):
         agent_id = len(self.agents)
+        agent.set_id(agent_id)
         self.agents[agent_id] = agent
 
     def add_env(self, env):

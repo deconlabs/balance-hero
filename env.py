@@ -3,15 +3,15 @@ class Env:
         self.state_bin_size = args.state_bin_size
         self.amount_bin_size = args.amount_bin_size
         self.price = args.price
-        self.stack = args.stack
+        self.quantity = args.quantity
         self.commision_pool = args.commision_pool
         self.mechanism = args.mechanism
-        self.total_cp = self._calculate_total_cp(self.mechanism)
+        self.total_cp = self.calculate_total_cp(self.mechanism)
         self.rates = dict()
 
     def calculate_total_cp(self, mec):
-        """메커니즘에 따라 total_cp 계산해서 돌려주는 함수"""
-        raise NotImplementedError
+        # uniform
+        return self.quantity
 
     def refine_orderbook(self, orderbook):
         amounts, whens, states = dict(), dict(), dict()
