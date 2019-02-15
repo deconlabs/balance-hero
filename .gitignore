@@ -3,3 +3,5 @@
 .vscode/
 server/node_modules/
 *.pyc
+*.xml
+*.iml
