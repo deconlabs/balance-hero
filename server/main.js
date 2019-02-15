@@ -139,6 +139,7 @@ function initHttpServer() {
                         "amount": amount
                     });
 
+                    console.log(`${agentId} purchased ${amount} at ${stack}`);
                     stack -= amount;
 
                     if (stack == 0 && timer != -1) {
@@ -147,7 +148,7 @@ function initHttpServer() {
                     }
 
                     res.send({
-                        "msg": "SUCESSFULLY PURCHASE.\n"
+                        "msg": "SUCCESSFULLY PURCHASE.\n"
                     });
                 }
             }

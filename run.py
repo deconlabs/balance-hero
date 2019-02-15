@@ -1,36 +1,45 @@
-import os
 from env import Env
 from agent import Agent
 from master import Master
 from arguments import argparser
+import utils
 
 
 def run():
-    try:
-        os.chdir("./server")
-        os.system("npm install --silent")
-        os.system("npm start &")
-    finally:
-        os.chdir("../")
+    # try:
+    #     os.chdir("./server")
+    #     os.system("npm install --silent")
+    #     os.system("npm start &")
+    # finally:
+    #     os.chdir("../")
 
     args = argparser()
 
     env = Env(args)
     agents = [Agent(args) for _ in range(args.n_agent)]
-    master = Master()
+    master = Master(args)
 
     for agent in agents:
         master.add_agent(agent)
     master.add_env(env)
 
     for idx in range(args.n_episode):
+        print("에피소드 {} 초기화".format(idx+1))
         # 서버의 stack, timer 초기화
+        print("서버를 초기화하는중...")
         master.reset()
         # 에피소드 시작
+        print("에피소드 시작...")
         master.start()
         # 에이전트 학습
+        print("에이전트 학습 중...")
         is_success = master.get_is_success()
-        master.train(is_success)
+        if is_success:
+            time = utils.get_time("http://localhost:3000")
+        else:
+            # 실패한 경우는 시간이 다 지났으니까 처음에 설정한 시간만큼 흘렀을 것
+            time = args.timer
+        master.train(is_success, time)
 
     print("끝")
 
