@@ -21,9 +21,16 @@ class Agent():
         self.uri = "http://localhost:3000"
         self.headers = {'Content-type': 'application/json'}
         self.id = None
-        self.query_interval = 0.5
+        self._query_interval = 0.5
+
+    @property
+    def query_interval(self):
+        # TODO: query interval 에이전트 특성으로 좀 주고 평균에 따라 정규분포 샘플링 등 해서
+        # 에이전트마다 차이가 있으나 너무 deterministic하지 않게 바꿔줘야 함
+        return self._query_interval + self.id * 0.01
 
     def create_q_table(self, stack):
+        # TODO: 최대 구매 수량 제한 걸기
         n_actions = (stack // self.amount_bin_size) + 1
         return np.zeros(n_actions)
 
@@ -68,7 +75,7 @@ class Agent():
             self.beta_tables[state] = self.softmax(self.q_tables[state])
         except IndexError as e:
             print("id: {}, state: {}, action: {}".format(self.id, state, action))
-            print(self.q_tables)
+            print({key: len(value) for key, value in self.beta_tables.items()})
             raise e
 
     def get_stack(self):
@@ -98,6 +105,7 @@ class Agent():
             pass
 
         while is_alive.value == 1:
+            time.sleep(self.query_interval)
             stack = self.get_stack()
             if stack == 0:
                 break
@@ -105,11 +113,11 @@ class Agent():
             action = self.get_action(state)
             if action != 0:
                 amount = action * self.amount_bin_size
-                print("id: {}, action: {}, amount: {}".format(self.id, action, amount))
                 is_successful = self.purchase(amount, self.id)
+                print("id: {}, state: {}, action: {}, amount: {}, success: {}"
+                      .format(self.id, state, action, amount, is_successful))
                 if is_successful:
                     break
-            time.sleep(self.query_interval)
         return True
 
     def process_stack(self, stack):

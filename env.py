@@ -7,6 +7,7 @@ class Env:
         self.stack_to_state = self.create_stack_to_state()
         self.commision_pool = args.commision_pool
         self.mechanism = args.mechanism
+        # TODO: 
         self.total_cp = self.calculate_total_cp(self.mechanism)
         # TODO: rates dictionary 잘 만들기
         self.rates = None
@@ -67,7 +68,7 @@ class Env:
             benefits = {id_: 0 for id_ in costs.keys()}
 
         rewards = {id_: benefits[id_] - costs[id_] for id_ in costs.keys()}
-        actions = {id_: int(amount / self.amount_bin_size) - 1 for id_, amount in amounts.items()}
+        actions = {id_: int(amount / self.amount_bin_size) for id_, amount in amounts.items()}
         return states, actions, rewards
 
     def create_stack_to_state(self):

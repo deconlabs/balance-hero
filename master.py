@@ -70,8 +70,6 @@ class Master:
 
     def train(self, is_success, time):
         orderbook = self.get_orderbook()
-        # TODO: 오더북만 이용해서 끝난 시간 알 수 있게 하기
-        # TODO: infos 딕셔너리 만들어서 is_success, time 같이 넘겨주기
         infos = {
             "is_success": is_success,
             "time": time / 1000.

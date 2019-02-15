@@ -34,11 +34,7 @@ def run():
         # 에이전트 학습
         print("에이전트 학습 중...")
         is_success = master.get_is_success()
-        if is_success:
-            time = utils.get_time("http://localhost:3000")
-        else:
-            # 실패한 경우는 시간이 다 지났으니까 처음에 설정한 시간만큼 흘렀을 것
-            time = args.timer
+        time = utils.get_time("http://localhost:3000", is_success, args.timer)
         master.train(is_success, time)
 
     print("끝")
