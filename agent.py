@@ -6,16 +6,38 @@ import time
 
 class Agent():
     def __init__(self, args):
-        self.n_actions = args.n_actions
-        self.n_states = args.n_states
+        self.quantity = args.quantity
+        self.amount_bin_size = args.amount_bin_size
+        self.state_bin_size = args.state_bin_size
+
         self.temperature = args.temperature
         self.lr = args.lr
-        self.q_tables = dict({state: np.zeros(self.n_actions)} for state in range(self.n_states))
-        self.beta_tables = dict({state: self.softmax(self.q_tables[state])} for state in range(self.n_states))
+
+        self.stack_to_state = self.create_stack_to_state()
+        self.q_tables = {state: self.create_q_table(stack) for stack, state in self.stack_to_state.items()}
+        self.beta_tables = {state: self.softmax(self.q_tables[state]) for state in self.stack_to_state.values()}
+
         self.uri = "http://localhost:3000"
         self.headers = {'Content-type': 'application/json'}
         self.id = None
         self.query_interval = 0.5
+
+    def create_q_table(self, stack):
+        n_actions = (stack // self.amount_bin_size) + 1
+        return np.zeros(n_actions)
+
+    def create_stack_to_state(self):
+        state_idx = 1
+        stack_to_state = dict()
+        while self.amount_bin_size * state_idx < self.state_bin_size:
+            stack_to_state[self.amount_bin_size * state_idx] = state_idx
+            state_idx += 1
+        i = 1
+        while self.state_bin_size * i <= self.quantity:
+            stack_to_state[self.state_bin_size * i] = state_idx
+            i += 1
+            state_idx += 1
+        return stack_to_state
 
     def softmax(self, x):
         if not isinstance(x, np.ndarray):
@@ -68,10 +90,10 @@ class Agent():
 
         while is_alive.value == 1:
             stack = self.get_stack()
-            state = self.get_state(stack)
+            state = self.stack_to_state[stack]
             action = self.get_action(state)
             if action != 0:
-                amount = self.blahblah[action]
+                amount = action * self.amount_bin_size
                 is_successful = self.purchase(amount, self.id)
                 if is_successful:
                     break

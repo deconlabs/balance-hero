@@ -2,6 +2,7 @@ import os
 from env import Env
 from agent import Agent
 from master import Master
+from arguments import argparser
 
 
 def run():
@@ -12,8 +13,10 @@ def run():
     finally:
         os.chdir("../")
 
-    env = Env()
-    agents = [Agent() for _ in range(args.n_agents)]
+    args = argparser()
+
+    env = Env(args)
+    agents = [Agent(args) for _ in range(args.n_agent)]
     master = Master()
 
     for agent in agents:
@@ -30,3 +33,7 @@ def run():
         master.train(is_success)
 
     print("끝")
+
+
+if __name__ == '__main__':
+    run()
