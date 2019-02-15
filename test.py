@@ -1,3 +1,8 @@
+"""
+Multiprocessing 사용 예제
+모든 프로세스가 생성될때까지 작업 시작하지 않도록 공유하는 cnt 변수 넘겨줘서 대기하도록 하는 예제
+"""
+
 from multiprocessing import Process, Value
 import requests
 import json

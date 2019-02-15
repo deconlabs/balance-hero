@@ -2,6 +2,7 @@ import numpy as np
 import requests
 import json
 import time
+import random
 
 
 class Agent():
@@ -54,16 +55,21 @@ class Agent():
         if deterministic:
             action = np.random.choice(np.flatnonzero(beta_table == beta_table.max()))
         else:
-            action = np.random.choice(np.arange(beta_table.size), p=beta_table)
+            action = np.random.choice(np.arange(beta_table.size), 1, p=beta_table)
         action = int(action)
         return action
 
     def learn(self, state, action, reward):
-        q1 = self.q_tables[state][action]
-        q2 = reward
+        try:
+            q1 = self.q_tables[state][action]
+            q2 = reward
 
-        self.q_tables[state][action] += self.lr * (q2 - q1) / self.beta_tables[state][action]
-        self.beta_tables[state] = self.softmax(self.q_tables[state])
+            self.q_tables[state][action] += self.lr * (q2 - q1) / self.beta_tables[state][action]
+            self.beta_tables[state] = self.softmax(self.q_tables[state])
+        except IndexError as e:
+            print("id: {}, state: {}, action: {}".format(self.id, state, action))
+            print(self.q_tables)
+            raise e
 
     def get_stack(self):
         res = requests.get(self.uri + "/stack")
@@ -83,6 +89,9 @@ class Agent():
         return result
 
     def start(self, cnt, is_alive, n_agent):
+        random.seed()
+        np.random.seed()
+
         with cnt.get_lock():
             cnt.value += 1
         while cnt.value != n_agent:
@@ -90,12 +99,23 @@ class Agent():
 
         while is_alive.value == 1:
             stack = self.get_stack()
-            state = self.stack_to_state[stack]
+            if stack == 0:
+                break
+            state = self.stack_to_state[self.process_stack(stack)]
             action = self.get_action(state)
             if action != 0:
                 amount = action * self.amount_bin_size
+                print("id: {}, action: {}, amount: {}".format(self.id, action, amount))
                 is_successful = self.purchase(amount, self.id)
                 if is_successful:
                     break
             time.sleep(self.query_interval)
         return True
+
+    def process_stack(self, stack):
+        processed = None
+        if stack < self.state_bin_size:
+            processed = stack
+        else:
+            processed = (stack // self.state_bin_size) * self.state_bin_size
+        return processed

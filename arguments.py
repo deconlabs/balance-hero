@@ -8,6 +8,8 @@ def argparser():
                         help='물품 판매 수량')
     parser.add_argument('--price', type=float, default=1.0,
                         help='물품의 가격')
+    parser.add_argument('--timer', type=float, default=3000,
+                        help='딜 진행 시간')
     parser.add_argument('--amount_bin_size', type=int, default=10,
                         help='최소 구매 단위')
     parser.add_argument('--state_bin_size', type=int, default=100,
