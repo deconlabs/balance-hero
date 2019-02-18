@@ -14,8 +14,8 @@ class Env:
         self.cp_minimum = args.cp_minimum
         self.cp_table = self.create_cp_table()
         self.total_cp = sum(self.cp_table)
-        self.rates = self.create_rate_dict()
         self.n_agent = args.n_agent
+        self.rates = self.create_rate_dict()
 
     # TODO: rates 딕셔너리 제대로 만들기
     def create_rate_dict(self):
