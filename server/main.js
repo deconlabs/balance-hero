@@ -114,7 +114,7 @@ function initHttpServer() {
             console.log("Stopping server\n");
             // process.exit();
             timer = -1;
-            startTime = -1;
+            // startTime = -1;
             isAlive = false;
 
             if (stack == 0) { isSuccess = true; }
