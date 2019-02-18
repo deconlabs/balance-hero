@@ -30,12 +30,12 @@ def run():
         master.reset()
         # 에피소드 시작
         print("에피소드 시작...")
-        master.start()
+        infos = master.start()
         # 에이전트 학습
         print("에이전트 학습 중...")
-        is_success = utils.get_is_success()
-        time = utils.get_time(is_success, args.timer)
-        master.train(is_success, time)
+        infos["is_success"] = utils.get_is_success()
+        infos["time"] = utils.get_time(infos["is_success"], args.timer)
+        master.train(infos)
 
     print("끝")
 

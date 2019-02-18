@@ -1,7 +1,7 @@
 import json
 import time
 import requests
-from multiprocessing import Value, Process
+from multiprocessing import Value, Process, Manager
 import utils
 
 
@@ -27,6 +27,7 @@ class Master:
         requests.post(utils.URI + "/setTimer", headers=utils.HEADERS, data=json.dumps({"timer": self.timer}))
 
     def start(self):
+        infos = dict()
         cnt = Value('i', 0)
         is_alive = Value('i', 1)
 
@@ -38,27 +39,32 @@ class Master:
                     break
                 time.sleep(1)
 
-        procs = []
-        proc = Process(target=f, args=(is_alive, ))
-        proc.start()
-        procs.append(proc)
-        for id_, agent in self.agents.items():
-            proc = Process(target=agent.start, args=(cnt, is_alive, len(self.agents)))
-            procs.append(proc)
+        with Manager() as manager:
+            s_a_dict = manager.dict()
+            procs = []
+            proc = Process(target=f, args=(is_alive, ))
             proc.start()
+            procs.append(proc)
+            for id_, agent in self.agents.items():
+                proc = Process(target=agent.start, args=(cnt, is_alive, s_a_dict, len(self.agents)))
+                procs.append(proc)
+                proc.start()
 
-        for proc in procs:
-            proc.join()
+            for proc in procs:
+                proc.join()
+            infos["s_a_dict"] = s_a_dict.copy()
 
-        return True
+        return infos
 
-    def train(self, is_success, time):
+    def train(self, infos):
+        s_a_dict = infos["s_a_dict"]
+        states, actions = dict(), dict()
+        for id_ in s_a_dict.keys():
+            states[id_] = s_a_dict[id_]["state"]
+            actions[id_] = s_a_dict[id_]["action"]
+
         orderbook = utils.get_orderbook()
-        infos = {
-            "is_success": is_success,
-            "time": time / 1000.
-        }
-        states, actions, rewards = self.env.step(orderbook, infos)
+        rewards = self.env.step(orderbook, infos)
         print("states: ", states)
         print("actions: ", actions)
         print("rewards: ", rewards)

@@ -157,6 +157,8 @@ function initHttpServer() {
         }
     });
 
+    // TODO: Reset할 때마다 json 파일에 저장하니까 file I/O에 걸리는 시간이 너무 큼
+    // 내부적으로 기록을 하고 있다가 적절한 간격마다 저장을 하게 하는게 좋을 듯함
     app.post("/reset", function (req, res) {
         // write log file
         if (!fs.existsSync("../logs/")) { fs.mkdirSync("../logs/"); }

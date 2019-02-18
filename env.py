@@ -39,16 +39,15 @@ class Env:
         # 이자율 출처: 전국은행연합회
         # https://portal.kfb.or.kr/main/main.php
 
-        rates_ = [3.734, 3.734, 4.508, 4.508, 6.042, 6.042, 7.946, 7.946, 9.475, 9.475]
+        rates_ = [0.03734, 0.03734, 0.04508, 0.04508, 0.06042, 0.06042, 0.07946, 0.07946, 0.09475, 0.09475]
         return {id_: rates_[self.credits[id_] - 1] for id_ in range(self.n_agent)}
 
     def refine_orderbook(self, orderbook):
-        amounts, whens, states = dict(), dict(), dict()
+        amounts, whens = dict(), dict()
         for order in orderbook:
             amounts[order["id"]] = order["amount"]
             whens[order["id"]] = order["when"]
-            states[order["id"]] = self.stack_to_state[self.process_stack(order["when"])]
-        return amounts, whens, states
+        return amounts, whens
 
         # 오더 여러번 할 수 있는 경우를 위한 코드
         # orders = defaultdict(lambda: [])
@@ -73,12 +72,14 @@ class Env:
         return self.commision_pool * cp / self.total_cp
 
     def step(self, orderbook, infos):
-        amounts, whens, states = self.refine_orderbook(orderbook)
+        amounts, whens = self.refine_orderbook(orderbook)
         print("amounts: ", amounts)
 
         is_success = infos["is_success"]
-        t = infos["time"]
+        t = infos["time"] / 1000.  # milliseconds
 
+        # TODO: Cost 계산에 문제 있음. 현재 모든 에이전트의 t가 일률적으로 정해지는데 사실 t는 매 에이전트마다 다르
+        # 오더 북에 timestamp를 넣었으니까 오더북을 파싱할 때 개인별 시간을 정해줘야 함
         costs = {id_: self.get_cost(amounts[id_], self.rates[id_], t)
                  for id_ in amounts.keys()}
         if is_success:
@@ -90,8 +91,7 @@ class Env:
             benefits = {id_: 0 for id_ in costs.keys()}
 
         rewards = {id_: benefits[id_] - costs[id_] for id_ in costs.keys()}
-        actions = {id_: int(amount / self.amount_bin_size) for id_, amount in amounts.items()}
-        return states, actions, rewards
+        return rewards
 
     def create_stack_to_state(self):
         state_idx = 1
@@ -105,14 +105,6 @@ class Env:
             i += 1
             state_idx += 1
         return stack_to_state
-
-    def process_stack(self, stack):
-        processed = None
-        if stack < self.state_bin_size:
-            processed = stack
-        else:
-            processed = (stack // self.state_bin_size) * self.state_bin_size
-        return processed
 
     def create_cp_table(self):
         if self.mechanism == 0:

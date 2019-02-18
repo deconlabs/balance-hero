@@ -16,7 +16,7 @@ def argparser():
                         help='state 단위')
     parser.add_argument('--max_purchase_quantity', type=int, default=200,
                         help='최대 구매 수량')
-    parser.add_argument('--n_agent', type=int, default=10,
+    parser.add_argument('--n_agent', type=int, default=30,
                         help='에이전트 수')
     parser.add_argument('--n_episode', type=int, default=1000,
                         help='에피소드 수')

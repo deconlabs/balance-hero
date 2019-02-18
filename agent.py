@@ -31,6 +31,9 @@ class Agent():
     def get_query_interval(self):
         # TODO: query interval 에이전트 특성으로 좀 주고 평균에 따라 정규분포 샘플링 등 해서
         # 에이전트마다 차이가 있으나 너무 deterministic하지 않게 바꿔줘야 함: diff, std 조정
+
+        # TODO: 현재 쿼리 인터벌이 너무 줄세우는 식으로 진행이 되는데 좀 섞이게끔 해야할 것 같음
+        # 너무 123456789 이게 심한 것 같은데.. 잘 모르겠다 
         mu = self.query_minimum + self.id * self.query_diff
         return max(self.query_minimum, random.gauss(mu, self.query_std))
 
@@ -97,7 +100,7 @@ class Agent():
             result = True
         return result
 
-    def start(self, cnt, is_alive, n_agent):
+    def start(self, cnt, is_alive, s_a_dict, n_agent):
         random.seed()
         np.random.seed()
 
@@ -120,6 +123,8 @@ class Agent():
                 print("id: {}, state: {}, action: {}, amount: {}, success: {}"
                       .format(self.id, state, action, amount, is_successful))
                 if is_successful:
+                    # 성공적으로 구매를 했다면 구매 당시의 (state, action)을 s_a_dict에 기록
+                    s_a_dict[self.id] = {"state": state, "action": action}
                     break
         return True
 
