@@ -10,14 +10,16 @@ class Env:
         self.stack_to_state = self.create_stack_to_state()
         self.commision_pool = args.commision_pool
         self.mechanism = args.mechanism
-        # cp_table
         self.cp_rate = args.cp_rate
         self.cp_minimum = args.cp_minimum
         self.cp_table = self.create_cp_table()
         self.total_cp = sum(self.cp_table)
-        # TODO: rates dictionary 잘 만들기
-        self.rates = None
+        self.rates = self.create_rate_dict()
         self.n_agent = args.n_agent
+
+    # TODO: rates 딕셔너리 제대로 만들기
+    def create_rate_dict(self):
+        return {id_: 0.01 for id_ in range(self.n_agent)}
 
     def refine_orderbook(self, orderbook):
         amounts, whens, states = dict(), dict(), dict()
@@ -55,8 +57,6 @@ class Env:
 
         is_success = infos["is_success"]
         t = infos["time"]
-        # TODO: rates 딕셔너리 제대로 만들기
-        self.rates = {id_: 0.01 for id_ in range(self.n_agent)}
 
         costs = {id_: self.get_cost(amounts[id_], self.rates[id_], t)
                  for id_ in amounts.keys()}
