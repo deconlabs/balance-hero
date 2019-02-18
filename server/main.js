@@ -26,7 +26,7 @@ var timer = -1; // milli-secs
 var startTime = -1;
 var t; // setTimeout()
 
-var orders = []; // [{"id": 0, "when": 90, "amount": 10}, ...]
+var orders = []; // [{"id": 0, "when": 90, "amount": 10, "timestamp": 1589311230}, ...]
 
 var isAlive = false;
 var isSuccess = false;
@@ -114,7 +114,7 @@ function initHttpServer() {
             console.log("Stopping server\n");
             // process.exit();
             timer = -1;
-            // startTime = -1;
+            startTime = -1;
             isAlive = false;
 
             if (stack == 0) { isSuccess = true; }
@@ -137,7 +137,8 @@ function initHttpServer() {
                     orders.push({
                         "id": agentId,
                         "when": stack,
-                        "amount": amount
+                        "amount": amount,
+                        "timestamp": getCurrentTimestamp()
                     });
 
                     console.log(`${agentId} purchased ${amount} at ${stack}`);
@@ -159,10 +160,16 @@ function initHttpServer() {
     app.post("/reset", function (req, res) {
         // write log file
         if (!fs.existsSync("../logs/")) { fs.mkdirSync("../logs/"); }
+
+        var dealTime = 0;
+        if (orders.length != 0) {
+            dealTime = orders[orders.length - 1]["timestamp"] - orders[0]["timestamp"]
+        }
+
         fs.writeFileSync("../logs/" + getCurrentTimestamp().toString() + ".json",
             JSON.stringify({
-                "success": isSuccess,
-                "time": (getCurrentTimestamp() - startTime),
+                "dealSuccess": isSuccess,
+                "dealTime": dealTime,
                 "orders": orders
             }),
             "utf-8")
