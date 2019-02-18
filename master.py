@@ -57,11 +57,11 @@ class Master:
             for proc in procs:
                 proc.join()
             self.infos["s_a_dict"] = s_a_dict.copy()
-
         return True
 
     def train(self):
         self.infos["is_success"] = utils.get_is_success()
+        self.infos["timer"] = self.timer
 
         s_a_dict = self.infos["s_a_dict"]
         states, actions = dict(), dict()

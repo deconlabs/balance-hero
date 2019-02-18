@@ -77,9 +77,16 @@ class Env:
     def step(self, orderbook, infos):
         amounts, whens, times = self.refine_orderbook(orderbook)
         print("amounts: ", amounts)
-        start_time = infos["start_time"]
+
+        if infos["is_success"]:
+            # 성공한 경우 딜이 끝난 시간은 마지막 오더의 timestamp
+            end_time = max(times.values())
+        else:
+            # 실패한 경우 딜이 끝난 시간은 시작한 시간 + 딜 진행 시간
+            end_time = infos["start_time"] + infos["timer"]
+
         for id_ in times.keys():
-            times[id_] = (times[id_] - start_time) / 1000.  # millisecond
+            times[id_] = (end_time - times[id_]) / 1000.  # millisecond
 
         costs = {id_: self.get_cost(amounts[id_], self.rates[id_], times[id_])
                  for id_ in amounts.keys()}
