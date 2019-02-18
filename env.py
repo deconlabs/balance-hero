@@ -19,20 +19,6 @@ class Env:
         self.rates = None
         self.n_agent = args.n_agent
 
-    def create_cp_table(self):
-        if self.mechanism == 0:
-            return mechanism.cp_random(self.quantity)
-        elif self.mechanism == 1:
-            return mechanism.uniform(self.quantity)
-        elif self.mechanism == 2:
-            return mechanism.linear_upward(self.quantity, self.cp_rate, self.cp_minimum)
-        elif self.mechanism == 3:
-            return mechanism.linear_downward(self.quantity, self.cp_rate, self.cp_minimum)
-        elif self.mechanism == 4:
-            return mechanism.convex(self.quantity, self.cp_rate, self.cp_minimum)
-        elif self.mechanism == 4:
-            return mechanism.concave(self.quantity, self.cp_rate, self.cp_minimum)
-
     def refine_orderbook(self, orderbook):
         amounts, whens, states = dict(), dict(), dict()
         for order in orderbook:
@@ -106,3 +92,17 @@ class Env:
         else:
             processed = (stack // self.state_bin_size) * self.state_bin_size
         return processed
+
+    def create_cp_table(self):
+        if self.mechanism == 0:
+            return mechanism.cp_random(self.quantity)
+        elif self.mechanism == 1:
+            return mechanism.uniform(self.quantity)
+        elif self.mechanism == 2:
+            return mechanism.linear_upward(self.quantity, self.cp_rate, self.cp_minimum)
+        elif self.mechanism == 3:
+            return mechanism.linear_downward(self.quantity, self.cp_rate, self.cp_minimum)
+        elif self.mechanism == 4:
+            return mechanism.convex(self.quantity, self.cp_rate, self.cp_minimum)
+        elif self.mechanism == 4:
+            return mechanism.concave(self.quantity, self.cp_rate, self.cp_minimum)

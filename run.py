@@ -24,7 +24,7 @@ def run():
     master.add_env(env)
 
     for idx in range(args.n_episode):
-        print("에피소드 {} 초기화".format(idx+1))
+        print("에피소드 {} 초기화".format(idx + 1))
         # 서버의 stack, timer 초기화
         print("서버를 초기화하는중...")
         master.reset()
