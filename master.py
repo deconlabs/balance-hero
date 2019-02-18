@@ -2,14 +2,13 @@ import json
 import time
 import requests
 from multiprocessing import Value, Process
+import utils
 
 
 class Master:
     def __init__(self, args):
         self.agents = dict()
         self.env = None
-        self.uri = "http://localhost:3000"
-        self.headers = {'Content-type': 'application/json'}
 
         self.quantity = args.quantity
         self.timer = args.timer
@@ -22,21 +21,6 @@ class Master:
     def add_env(self, env):
         self.env = env
 
-    def get_orderbook(self):
-        res = requests.get(self.uri + "/orderBook")
-        orderbook = json.loads(res.text)["orderBook"]
-        return orderbook
-
-    def get_is_alive(self):
-        res = requests.get(self.uri + "/status")
-        is_alive = json.loads(res.text)["isAlive"]
-        return is_alive
-
-    def get_is_success(self):
-        res = requests.get(self.uri + "/status")
-        is_success = json.loads(res.text)["isSuccess"]
-        return is_success
-
     def reset(self):
         requests.post(self.uri + "/reset", headers=self.headers)
         requests.post(self.uri + "/setStack", headers=self.headers, data=json.dumps({"stack": self.quantity}))
@@ -48,7 +32,7 @@ class Master:
 
         def f(is_alive):
             while True:
-                if not self.get_is_alive():
+                if not utils.get_is_alive():
                     print("서버가 죽었어요!")
                     is_alive.value = 0
                     break
@@ -69,7 +53,7 @@ class Master:
         return True
 
     def train(self, is_success, time):
-        orderbook = self.get_orderbook()
+        orderbook = utils.get_orderbook()
         infos = {
             "is_success": is_success,
             "time": time / 1000.

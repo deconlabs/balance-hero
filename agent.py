@@ -3,6 +3,7 @@ import requests
 import json
 import time
 import random
+import utils
 
 
 class Agent():
@@ -78,17 +79,12 @@ class Agent():
             print({key: len(value) for key, value in self.beta_tables.items()})
             raise e
 
-    def get_stack(self):
-        res = requests.get(self.uri + "/stack")
-        stack = json.loads(res.text)["stack"]
-        return stack
-
     def purchase(self, amount, id_):
         data = json.dumps({
             "id": id_,
             "amount": amount
         })
-        res = requests.post(self.uri + "/purchase", headers=self.headers, data=data)
+        res = requests.post(utils.URI + "/purchase", headers=utils.HEADERS, data=data)
         msg = json.loads(res.text)["msg"]
         result = False
         if 'success' in msg.lower():
@@ -106,7 +102,7 @@ class Agent():
 
         while is_alive.value == 1:
             time.sleep(self.query_interval)
-            stack = self.get_stack()
+            stack = utils.get_stack()
             if stack == 0:
                 break
             state = self.stack_to_state[self.process_stack(stack)]
