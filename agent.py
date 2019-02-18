@@ -9,6 +9,7 @@ import utils
 class Agent():
     def __init__(self, args):
         self.quantity = args.quantity
+        self.max_purchase_quantity = args.max_purchase_quantity
         self.amount_bin_size = args.amount_bin_size
         self.state_bin_size = args.state_bin_size
 
@@ -31,8 +32,10 @@ class Agent():
         return self._query_interval + self.id * 0.01
 
     def create_q_table(self, stack):
-        # TODO: 최대 구매 수량 제한 걸기
+        # TODO: 최대 구매 수량 제한을 에이전트별로 다르게 하는 것도 괜찮을까?
+        max_n_actions = (self.max_purchase_quantity // self.amount_bin_size) + 1
         n_actions = (stack // self.amount_bin_size) + 1
+        n_actions = min(max_n_actions, n_actions)
         return np.zeros(n_actions)
 
     def create_stack_to_state(self):
