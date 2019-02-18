@@ -28,6 +28,10 @@ def argparser():
                         help='reserved pool for distributing commision')
     parser.add_argument('--mechanism', type=int, default=0,
                         help='mechanism (0, 1, 2, ...) 추후 추가')
+    parser.add_argument('--cp_rate', type=float, default=1.0,
+                        help='커미션포인트의 변화율(기울기, 곡률)')
+    parser.add_argument('--cp_minimum', type=float, default=1.0,
+                        help='커미션포인트의 최솟값')
 
     args = parser.parse_args()
     return args

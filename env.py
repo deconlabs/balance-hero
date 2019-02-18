@@ -1,3 +1,6 @@
+import mechanism
+
+
 class Env:
     def __init__(self, args):
         self.state_bin_size = args.state_bin_size
@@ -7,15 +10,28 @@ class Env:
         self.stack_to_state = self.create_stack_to_state()
         self.commision_pool = args.commision_pool
         self.mechanism = args.mechanism
-        # TODO: 
-        self.total_cp = self.calculate_total_cp(self.mechanism)
+        # cp_table
+        self.cp_rate = args.cp_rate
+        self.cp_minimum = args.cp_minimum
+        self.cp_table = self.creat_cp_table()
+        self.total_cp = sum(self.cp_table)
         # TODO: rates dictionary 잘 만들기
         self.rates = None
         self.n_agent = args.n_agent
 
-    def calculate_total_cp(self, mec):
-        # uniform
-        return self.quantity
+    def create_cp_table(self):
+        if self.mechanism == 0:
+            return mechanism.cp_random(self.quantity)
+        elif self.mechanism == 1:
+            return mechanism.uniform(self.quantity)
+        elif self.mechanism == 2:
+            return mechanism.linear_upward(self.quantity, self.cp_rate, self.cp_minimum)
+        elif self.mechanism == 3:
+            return mechanism.linear_downward(self.quantity, self.cp_rate, self.cp_minimum)
+        elif self.mechanism == 4:
+            return mechanism.convex(self.quantity, self.cp_rate, self.cp_minimum)
+        elif self.mechanism == 4:
+            return mechanism.concave(self.quantity, self.cp_rate, self.cp_minimum)
 
     def refine_orderbook(self, orderbook):
         amounts, whens, states = dict(), dict(), dict()

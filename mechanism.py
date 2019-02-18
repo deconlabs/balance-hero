@@ -1,70 +1,55 @@
-# def f(a, b, N, x):
-#     """
-#     :param a: 기울기, 곡률
-#     :param b: 가장 낮은 커미션 포인트 (b > 0)
-#     :param N: 총 order의 수
-#     :param x: input
-#     :return: output
-#     """
-#     return y
+import random
 
 
-# 우하향 선형 그래프를 위한
-# y = ax + (c0 - aN)
-def mechanism_v1(a, c0, N, x):
+# Random
+def cp_random(quantity):
+    return [random.random() for _ in range(quantity)]
+
+
+# Uniform
+def uniform(quantity):
+    return [1 for _ in range(quantity)]
+
+
+# Linear graph slopes upward from left to right
+def linear_upward(quantity, a, b):
     """
-    :param a: 기울기 (< 0)
-    :param c0: 마지막 구매의 커미션포인트 (> 0)
-    :param N: 총 order의 수
-    :param x: input
-    :return: output
-    """
-    return a * x + (c0 - a * N)
-
-
-# 우상향 선형 그래프를 위한
-# y = ax + b
-def mechanism_v2(a, b, N, x):
-    """
+    :param quantity: 물품 판매 수량
     :param a: 기울기 (> 0)
-    :param b: 처음 구매의 커미션 포인트 (> 0)
-    :param x: input
-    :return: output
+    :param b: 최저점
+    :return: array
     """
-    return a * x + b
+    return [a * i + b for i in range(quantity)]
 
 
-# uniform
-# y = u
-def mechanism_v3(a, u, N, x):
+# Linear graph slopes downward from left to right
+def linear_downward(quantity, a, b):
     """
-    :param u: 얻는 커미션 포인트 (> 0)
-    :param x: input
-    :return: output
+    :param quantity: 물품 판매 수량
+    :param a: 기울기 (< 0)
+    :param b: 최저점
+    :return: array
     """
-    return u
+    return [a * i + (b - a * quantity) for i in range(quantity)]
 
 
 # Convex
-# y = a(x - N / 2)^2 + c0
-def mechanism_v4(a, c0, N, x):
+def convex(quantity, a, b):
     """
+    :param quantity: 물품 판매 수량
     :param a: 곡률 (> 0)
-    :param c0: 가장 낮은 커미션포인트 (> 0)
-    :param N: 총 order의 수
-    :param x: input
-    :return: output
+    :param b: 최저점
+    :return: array
     """
-    return a * (x - N / 2) ** 2 + c0
+    return [a * (i - quantity / 2) ** 2 + b for i in range(quantity)]
+
 
 # Concave
-# y = a(x - N / 2)^2 + (b - a * N^2 / 4)
-def mechanism_v5(a, b, N, x):
+def concave(quantity, a, b):
     """
+    :param quantity: 물품 판매 수량
     :param a: 곡률 (< 0)
-    :param b: 처음과 마지막의 커미션 포인트 (> 0)
-    :param N: 총 order의 수
-    :param x: input
-    :return: output
+    :param b: 최저점
+    :return: array
     """
-    return a * (x - N / 2) ** 2 + (b - a * (N ** 2) / 4)
+    return [a * (i - quantity / 2) ** 2 + (b - a * (quantity ** 2) / 4) for i in range(quantity)]
