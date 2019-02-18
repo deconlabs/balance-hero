@@ -43,11 +43,12 @@ class Env:
         return {id_: rates_[self.credits[id_] - 1] for id_ in range(self.n_agent)}
 
     def refine_orderbook(self, orderbook):
-        amounts, whens = dict(), dict()
+        amounts, whens, times = dict(), dict(), dict()
         for order in orderbook:
             amounts[order["id"]] = order["amount"]
             whens[order["id"]] = order["when"]
-        return amounts, whens
+            times[order["id"]] = order["timestamp"]
+        return amounts, whens, times
 
         # 오더 여러번 할 수 있는 경우를 위한 코드
         # orders = defaultdict(lambda: [])
@@ -59,6 +60,8 @@ class Env:
 
     def get_cost(self, amount, r, t):
         try:
+            # TODO: t의 스케일을 어떻게 조절해야 할 지 모르겠다.
+            # 지금으로써는 3초 지나면 3제곱, 20초 지나면 20제곱으로 엄청나게 크다
             m = self.price * amount
             return m * ((1 + r) ** t)
         except OverflowError as e:
@@ -72,17 +75,17 @@ class Env:
         return self.commision_pool * cp / self.total_cp
 
     def step(self, orderbook, infos):
-        amounts, whens = self.refine_orderbook(orderbook)
+        amounts, whens, times = self.refine_orderbook(orderbook)
         print("amounts: ", amounts)
-
-        is_success = infos["is_success"]
-        t = infos["time"] / 1000.  # milliseconds
+        start_time = infos["start_time"]
+        for id_ in times.keys():
+            times[id_] = (times[id_] - start_time) / 1000.  # millisecond
 
         # TODO: Cost 계산에 문제 있음. 현재 모든 에이전트의 t가 일률적으로 정해지는데 사실 t는 매 에이전트마다 다르
         # 오더 북에 timestamp를 넣었으니까 오더북을 파싱할 때 개인별 시간을 정해줘야 함
-        costs = {id_: self.get_cost(amounts[id_], self.rates[id_], t)
+        costs = {id_: self.get_cost(amounts[id_], self.rates[id_], times[id_])
                  for id_ in amounts.keys()}
-        if is_success:
+        if infos["is_success"]:
             cps = {id_: self.get_cp(amounts[id_], whens[id_])
                    for id_ in amounts.keys()}
             benefits = {id_: self.get_benefit(cps[id_])

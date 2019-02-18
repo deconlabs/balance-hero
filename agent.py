@@ -33,7 +33,7 @@ class Agent():
         # 에이전트마다 차이가 있으나 너무 deterministic하지 않게 바꿔줘야 함: diff, std 조정
 
         # TODO: 현재 쿼리 인터벌이 너무 줄세우는 식으로 진행이 되는데 좀 섞이게끔 해야할 것 같음
-        # 너무 123456789 이게 심한 것 같은데.. 잘 모르겠다 
+        # 너무 123456789 이게 심한 것 같은데.. 잘 모르겠다
         mu = self.query_minimum + self.id * self.query_diff
         return max(self.query_minimum, random.gauss(mu, self.query_std))
 

@@ -1,6 +1,4 @@
-import json
 import time
-import requests
 from multiprocessing import Value, Process, Manager
 import utils
 
@@ -13,6 +11,8 @@ class Master:
         self.quantity = args.quantity
         self.timer = args.timer
 
+        self.infos = None
+
     def add_agent(self, agent):
         agent_id = len(self.agents)
         agent.set_id(agent_id)
@@ -22,12 +22,16 @@ class Master:
         self.env = env
 
     def reset(self):
-        requests.post(utils.URI + "/reset", headers=utils.HEADERS)
-        requests.post(utils.URI + "/setStack", headers=utils.HEADERS, data=json.dumps({"stack": self.quantity}))
-        requests.post(utils.URI + "/setTimer", headers=utils.HEADERS, data=json.dumps({"timer": self.timer}))
+        utils.reset()
+        utils.set_stack(self.quantity)
+        utils.set_timer(self.timer)
+
+        self.infos = dict()
+        start_time = utils.get_start_time()
+        assert start_time != -1
+        self.infos["start_time"] = start_time
 
     def start(self):
-        infos = dict()
         cnt = Value('i', 0)
         is_alive = Value('i', 1)
 
@@ -52,19 +56,21 @@ class Master:
 
             for proc in procs:
                 proc.join()
-            infos["s_a_dict"] = s_a_dict.copy()
+            self.infos["s_a_dict"] = s_a_dict.copy()
 
-        return infos
+        return True
 
-    def train(self, infos):
-        s_a_dict = infos["s_a_dict"]
+    def train(self):
+        self.infos["is_success"] = utils.get_is_success()
+
+        s_a_dict = self.infos["s_a_dict"]
         states, actions = dict(), dict()
         for id_ in s_a_dict.keys():
             states[id_] = s_a_dict[id_]["state"]
             actions[id_] = s_a_dict[id_]["action"]
 
         orderbook = utils.get_orderbook()
-        rewards = self.env.step(orderbook, infos)
+        rewards = self.env.step(orderbook, self.infos)
         print("states: ", states)
         print("actions: ", actions)
         print("rewards: ", rewards)

@@ -18,6 +18,16 @@ def get_time(is_success, timer):
     return time
 
 
+def get_start_time():
+    res = requests.get(URI + "/timer")
+    res = json.loads(res.text)
+    if "msg" in res:
+        start_time = -1
+    else:
+        start_time = res["start"]
+    return start_time
+
+
 def get_is_success():
     res = requests.get(URI + "/status")
     is_success = json.loads(res.text)["isSuccess"]
@@ -40,3 +50,15 @@ def get_stack():
     res = requests.get(URI + "/stack")
     stack = json.loads(res.text)["stack"]
     return stack
+
+
+def reset():
+    requests.post(URI + "/reset", headers=HEADERS)
+
+
+def set_stack(stack):
+    requests.post(URI + "/setStack", headers=HEADERS, data=json.dumps({"stack": stack}))
+
+
+def set_timer(timer):
+    requests.post(URI + "/setTimer", headers=HEADERS, data=json.dumps({"timer": timer}))

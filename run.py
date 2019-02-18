@@ -2,7 +2,6 @@ from env import Env
 from agent import Agent
 from master import Master
 from arguments import argparser
-import utils
 
 
 def run():
@@ -28,14 +27,13 @@ def run():
         # 서버의 stack, timer 초기화
         print("서버를 초기화하는중...")
         master.reset()
+
         # 에피소드 시작
         print("에피소드 시작...")
-        infos = master.start()
+        master.start()
         # 에이전트 학습
         print("에이전트 학습 중...")
-        infos["is_success"] = utils.get_is_success()
-        infos["time"] = utils.get_time(infos["is_success"], args.timer)
-        master.train(infos)
+        master.train()
 
     print("끝")
 
