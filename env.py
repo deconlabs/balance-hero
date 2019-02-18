@@ -13,7 +13,7 @@ class Env:
         # cp_table
         self.cp_rate = args.cp_rate
         self.cp_minimum = args.cp_minimum
-        self.cp_table = self.creat_cp_table()
+        self.cp_table = self.create_cp_table()
         self.total_cp = sum(self.cp_table)
         # TODO: rates dictionary 잘 만들기
         self.rates = None
@@ -58,8 +58,7 @@ class Env:
             raise e
 
     def get_cp(self, amount, when):
-        # uniform
-        return amount
+        return sum(self.cp_table[when - amount:when])
 
     def get_benefit(self, cp):
         return self.commision_pool * cp / self.total_cp
