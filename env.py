@@ -81,8 +81,6 @@ class Env:
         for id_ in times.keys():
             times[id_] = (times[id_] - start_time) / 1000.  # millisecond
 
-        # TODO: Cost 계산에 문제 있음. 현재 모든 에이전트의 t가 일률적으로 정해지는데 사실 t는 매 에이전트마다 다르
-        # 오더 북에 timestamp를 넣었으니까 오더북을 파싱할 때 개인별 시간을 정해줘야 함
         costs = {id_: self.get_cost(amounts[id_], self.rates[id_], times[id_])
                  for id_ in amounts.keys()}
         if infos["is_success"]:
