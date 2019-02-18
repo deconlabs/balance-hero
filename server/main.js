@@ -2,6 +2,7 @@
 const WebSocket = require("ws");
 const express = require("express");
 const bodyParser = require("body-parser");
+const fs = require("fs");
 
 // set environment variable
 const http_port = process.env.HTTP_PORT || 3000;
@@ -21,11 +22,11 @@ const http_port = process.env.HTTP_PORT || 3000;
 
 var stack = -1;
 
-var timer = -1;  // milli-secs
+var timer = -1; // milli-secs
 var startTime = -1;
-var t;  // setTimeout()
+var t; // setTimeout()
 
-var orders = [];  // [{"id": 0, "when": 90, "amount": 10}, ...]
+var orders = []; // [{"id": 0, "when": 90, "amount": 10}, ...]
 
 var isAlive = false;
 var isSuccess = false;
@@ -95,7 +96,7 @@ function initHttpServer() {
     */
     app.post("/setStack", function (req, res) {
         stack = req.body.stack;
-        
+
         if (timer != -1) { isAlive = true; }
 
         res.send({
@@ -115,7 +116,7 @@ function initHttpServer() {
             timer = -1;
             startTime = -1;
             isAlive = false;
-            
+
             if (stack == 0) { isSuccess = true; }
         }, timer);
 
@@ -125,7 +126,7 @@ function initHttpServer() {
     });
 
     app.post("/purchase", function (req, res) {
-        if (timer == -1) { res.send({ "msg": "MUST SET TIMER FIRST.\n" });}
+        if (timer == -1) { res.send({ "msg": "MUST SET TIMER FIRST.\n" }); }
         else {
             var amount = req.body.amount;
             if (amount <= 0 || stack - amount < 0) { res.send({ "msg": "INVALID AMOUNT.\n" }); }
@@ -156,14 +157,29 @@ function initHttpServer() {
     });
 
     app.post("/reset", function (req, res) {
+        // write log file
+        if (!fs.existsSync("../logs/")) { fs.mkdirSync("../logs/"); }
+        fs.writeFileSync("../logs/" + getCurrentTimestamp().toString() + ".json",
+            JSON.stringify({
+                "success": isSuccess,
+                "time": (getCurrentTimestamp() - startTime),
+                "orders": orders
+            }),
+            "utf-8")
+        console.log("SYNC WRITE COMPLETE.\n");
+
+        // reset stack
         stack = -1;
 
+        // reset timer
         clearTimeout(t);
         timer = -1;
         startTime = -1;
 
+        // reset orderbook
         orders = [];
 
+        // reset flag
         isAlive = false;
         isSuccess = false;
 
