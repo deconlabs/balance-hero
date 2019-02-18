@@ -23,13 +23,16 @@ class Agent():
         self.uri = "http://localhost:3000"
         self.headers = {'Content-type': 'application/json'}
         self.id = None
-        self._query_interval = 0.5
 
-    @property
-    def query_interval(self):
+        self.query_minimum = args.query_minimum
+        self.query_diff = args.query_diff
+        self.query_std = args.query_std
+
+    def get_query_interval(self):
         # TODO: query interval 에이전트 특성으로 좀 주고 평균에 따라 정규분포 샘플링 등 해서
-        # 에이전트마다 차이가 있으나 너무 deterministic하지 않게 바꿔줘야 함
-        return self._query_interval + self.id * 0.01
+        # 에이전트마다 차이가 있으나 너무 deterministic하지 않게 바꿔줘야 함: diff, std 조정
+        mu = self.query_minimum + self.id * self.query_diff
+        return max(self.query_minimum, random.gauss(mu, self.query_std))
 
     def create_q_table(self, stack):
         # TODO: 최대 구매 수량 제한을 에이전트별로 다르게 하는 것도 괜찮을까?
@@ -104,7 +107,8 @@ class Agent():
             pass
 
         while is_alive.value == 1:
-            time.sleep(self.query_interval)
+            # 매 번 쿼리 인터벌이 조금씩 변화
+            time.sleep(self.get_query_interval())
             stack = utils.get_stack()
             if stack == 0:
                 break

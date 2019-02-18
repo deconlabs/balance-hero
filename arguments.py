@@ -32,6 +32,14 @@ def argparser():
                         help='커미션포인트의 변화율(기울기, 곡률)')
     parser.add_argument('--cp_minimum', type=float, default=1.0,
                         help='커미션포인트의 최솟값')
+    parser.add_argument('--cp_minimum', type=float, default=1.0,
+                        help='커미션포인트의 최솟값')
+    parser.add_argument('--query_minimum', type=float, default=0.5,
+                        help='default(minimum) query interval')
+    parser.add_argument('--query_diff', type=float, default=0.01,
+                        help='에이전트간 쿼리 인터벌 차이 비율')
+    parser.add_argument('--query_std', type=float, default=0.01,
+                        help='쿼리 정규분포에 사용되는 표준편차')
 
     args = parser.parse_args()
     return args
