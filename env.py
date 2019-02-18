@@ -1,4 +1,5 @@
 import mechanism
+import numpy as np
 
 
 class Env:
@@ -15,12 +16,31 @@ class Env:
         self.cp_table = self.create_cp_table()
         self.total_cp = sum(self.cp_table)
         self.n_agent = args.n_agent
+
+        self.credits = self.create_credit_dict()
         self.rates = self.create_rate_dict()
+
+    def create_credit_dict(self):
+        # 에이전트의 신용등급 분포
+        # 대출거래고객의 신용등급 분포에 따라 랜덤 배정
+        # 2018년 12월 개인신용평가 관련 통계자료 기준
+        # http://www.niceinfo.co.kr/creditrating/cb_score_3.nice
+
+        p = np.array([0.2820866, 0.16822173, 0.1433743, 0.11848693, 0.10438483,
+                      0.06542559, 0.03797563, 0.03051768, 0.03119231, 0.0183344])
+        return {id_: np.random.choice(np.arange(1, 11), 1, p=p)[0] for id_ in range(self.n_agent)}
 
     def create_rate_dict(self):
         # 상위 5개 은행 대출 이자율의 평균
-        # 신용등급별로
-        return {id_: 0.01 for id_ in range(self.n_agent)}
+        # 은행 순위: 2018년 9월 금감원 금융정보통계시스템 기준
+        # http://fisis.fss.or.kr/fss/fsiview/indexw_ng.html
+
+        # 에이전트의 신용등급별에 따라 이자율이 다름
+        # 이자율 출처: 전국은행연합회
+        # https://portal.kfb.or.kr/main/main.php
+
+        rates_ = [3.734, 3.734, 4.508, 4.508, 6.042, 6.042, 7.946, 7.946, 9.475, 9.475]
+        return {id_: rates_[self.credits[id_] - 1] for id_ in range(self.n_agent)}
 
     def refine_orderbook(self, orderbook):
         amounts, whens, states = dict(), dict(), dict()
