@@ -33,8 +33,8 @@ def run():
         master.start()
         # 에이전트 학습
         print("에이전트 학습 중...")
-        is_success = master.get_is_success()
-        time = utils.get_time("http://localhost:3000", is_success, args.timer)
+        is_success = utils.get_is_success()
+        time = utils.get_time(is_success, args.timer)
         master.train(is_success, time)
 
     print("끝")

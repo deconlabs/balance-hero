@@ -22,9 +22,9 @@ class Master:
         self.env = env
 
     def reset(self):
-        requests.post(self.uri + "/reset", headers=self.headers)
-        requests.post(self.uri + "/setStack", headers=self.headers, data=json.dumps({"stack": self.quantity}))
-        requests.post(self.uri + "/setTimer", headers=self.headers, data=json.dumps({"timer": self.timer}))
+        requests.post(utils.URI + "/reset", headers=utils.HEADERS)
+        requests.post(utils.URI + "/setStack", headers=utils.HEADERS, data=json.dumps({"stack": self.quantity}))
+        requests.post(utils.URI + "/setTimer", headers=utils.HEADERS, data=json.dumps({"timer": self.timer}))
 
     def start(self):
         cnt = Value('i', 0)

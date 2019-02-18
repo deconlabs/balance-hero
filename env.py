@@ -7,7 +7,6 @@ class Env:
         self.stack_to_state = self.create_stack_to_state()
         self.commision_pool = args.commision_pool
         self.mechanism = args.mechanism
-        # TODO: 
         self.total_cp = self.calculate_total_cp(self.mechanism)
         # TODO: rates dictionary 잘 만들기
         self.rates = None

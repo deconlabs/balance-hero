@@ -13,6 +13,7 @@
   "dependencies": {
     "body-parser": "^1.15.2",
     "express": "^4.16.4",
+    "morgan": "^1.9.1",
     "ws": "^1.1.0"
   },
   "engines": {

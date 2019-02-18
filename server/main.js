@@ -2,6 +2,7 @@
 const WebSocket = require("ws");
 const express = require("express");
 const bodyParser = require("body-parser");
+const morgan = require("morgan");
 
 // set environment variable
 const http_port = process.env.HTTP_PORT || 3000;
@@ -33,6 +34,7 @@ var isSuccess = false;
 function initHttpServer() {
     const app = express();
     app.use(bodyParser.json());
+    app.use(morgan("default"));
 
     /**
      * GET example
