@@ -16,8 +16,6 @@ class Env:
         self.cp_table = self.create_cp_table()
         self.total_cp = sum(self.cp_table)
         self.n_agent = args.n_agent
-        self.rates = self.create_rate_dict()
-
         self.credits = self.create_credit_dict()
         self.rates = self.create_rate_dict()
 
