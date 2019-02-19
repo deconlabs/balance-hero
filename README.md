@@ -1,5 +1,5 @@
-# true-balance
-'true balance' simulator.
+# balance-hero
+'balance hero' simulator.
 
 ## TODO
 - [x] 이자율 에이전트마다 다르게 하기 / 이름도 바꾸기(rates에서)
