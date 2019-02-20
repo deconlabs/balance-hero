@@ -3,18 +3,10 @@ const WebSocket = require("ws");
 const express = require("express");
 const bodyParser = require("body-parser");
 const fs = require("fs");
-var rimraf = require("rimraf");
+const rimraf = require("rimraf");
 
 // set environment variable
 const http_port = process.env.HTTP_PORT || 3000;
-
-if (!fs.existsSync(fullLogDir)) {
-    fs.mkdirSync(fullLogDir);
-} else {
-    // if directory with same name already exists, remove that directory
-    rimraf.sync(fullLogDir);
-    fs.mkdirSync(fullLogDir);
-};
 
 // network delay table
 /*
@@ -129,8 +121,6 @@ function initHttpServer() {
         t = setTimeout(function () {
             console.log("Stopping server\n");
             // process.exit();
-            timer = -1;
-            startTime = -1;
             isAlive = false;
 
             if (stack == 0) { isSuccess = true; }
@@ -142,7 +132,7 @@ function initHttpServer() {
     });
 
     app.post("/purchase", function (req, res) {
-        if (timer == -1) { res.send({ "msg": "MUST SET TIMER FIRST.\n" }); }
+        if (!isAlive) { res.send({ "msg": "START SERVER FIRST.\n" }); }
         else {
             var amount = req.body.amount;
             if (amount <= 0 || stack - amount < 0) { res.send({ "msg": "INVALID AMOUNT.\n" }); }
@@ -174,17 +164,27 @@ function initHttpServer() {
     });
 
     app.post("/reset", function (req, res) {
+        var path = req.body.path
+        
         // write log file
+        if (!fs.existsSync("../logs/")) { fs.mkdirSync("../logs/"); }
+        if (!fs.existsSync("../logs/" + path)) {
+            fs.mkdirSync("../logs/" + path);
+        } else {
+            rimraf.sync("../logs/" + path);
+            fs.mkdirSync("../logs/" + path);
+        }
 
         var dealTime = 0;
         if (orders.length != 0) {
             dealTime = orders[orders.length - 1]["timestamp"] - orders[0]["timestamp"]
         }
 
-        fs.writeFileSync(fullLogDir + getCurrentTimestamp().toString() + ".json",
+        fs.writeFileSync("../logs/" + path + getCurrentTimestamp().toString() + ".json",
             JSON.stringify({
                 "dealSuccess": isSuccess,
                 "dealTime": dealTime,
+                "startTime": startTime,
                 "orders": orders
             }),
             "utf-8")

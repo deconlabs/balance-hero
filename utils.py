@@ -51,7 +51,7 @@ def start(http_port, log_dir):
 
     os.chdir("./server")
     os.system("npm install --silent")
-    os.system("HTTP_PORT={} LOG_DIR={} npm start &".format(http_port, log_dir))
+    os.system("HTTP_PORT={} npm start &".format(http_port, log_dir))
     while True:
         try:
             res = requests.get(URI + "/isConnected")
@@ -68,8 +68,8 @@ def close():
     requests.post(URI + "/stop", headers=HEADERS)
 
 
-def reset():
-    requests.post(URI + "/reset", headers=HEADERS)
+def reset(path):
+    requests.post(URI + "/reset", headers=HEADERS, data=json.dumps({"path": path}))
 
 
 def get_time(is_success, timer):
@@ -134,6 +134,8 @@ def set_timer(timer):
 
 
 def create_log_dir(argv):
+    # TODO: sys.argv가 아니라 원하는 대로 폴더명 만들어지게끔 바꾸는 것이 더 보기 좋을듯
+    # 지금은 이상한 폴더명으로 생성됨
     if not os.path.isdir('./logs/'):
         os.mkdir('./logs/')
     my_args = argv
@@ -143,3 +145,4 @@ def create_log_dir(argv):
     path = '_'.join(path_) + '/'
     if not os.path.isdir('./logs/' + path):
         os.mkdir('./logs/' + path)
+    return path

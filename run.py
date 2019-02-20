@@ -10,7 +10,7 @@ import utils
 def run():
     args = argparser()
 
-    utils.create_log_dir(sys.argv)
+    path = utils.create_log_dir(sys.argv)
     utils.start(args.http_port, args.log_dir)
 
     env = Env(args)
@@ -28,7 +28,8 @@ def run():
         print('=' * 80)
         print("Episode {}".format(idx + 1))
         # 서버의 stack, timer 초기화
-        master.reset()
+        print("서버를 초기화하는중...")
+        master.reset(path)
 
         # 에피소드 시작
         master.start()
