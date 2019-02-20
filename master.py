@@ -31,6 +31,9 @@ class Master:
         assert start_time != -1
         self.infos["start_time"] = start_time
 
+        for id_, agent in self.agents.items():
+            agent.update_eps()
+
     def start(self):
         cnt = Value('i', 0)
         is_alive = Value('i', 1)
@@ -61,6 +64,10 @@ class Master:
 
     def train(self):
         self.infos["is_success"] = utils.get_is_success()
+        if self.infos["is_success"]:
+            print("Deal: Success!")
+        else:
+            print("Deal: Failure!")
         self.infos["timer"] = self.timer
 
         s_a_dict = self.infos["s_a_dict"]
@@ -70,11 +77,12 @@ class Master:
             actions[id_] = s_a_dict[id_]["action"]
 
         orderbook = utils.get_orderbook()
-        rewards = self.env.step(orderbook, self.infos)
-        print("states: ", states)
-        print("actions: ", actions)
-        print("rewards: ", rewards)
+        rewards, times = self.env.step(orderbook, self.infos)
+        # print("states: ", states)
+        # print("actions: ", actions)
+        # print("rewards: ", rewards)
+        # print("times: ", times)
 
         # 주문을 하지 않은 에이전트는 학습할 필요가 없음
         for id_ in states.keys():
-            self.agents[id_].learn(states[id_], actions[id_], rewards[id_])
+            self.agents[id_].learn(states[id_], actions[id_], rewards[id_], times[id_])

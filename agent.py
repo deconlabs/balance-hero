@@ -15,10 +15,18 @@ class Agent():
 
         self.temperature = args.temperature
         self.lr = args.lr
+        self.rate = utils.get_interest_rate()
+        self.price = args.price
 
+        self.q_eps = 1.0
+        self.p_eps = 1.0
+        self.q_eps_decay = args.q_eps_decay
+        self.p_eps_decay = args.p_eps_decay
+
+        self.window = args.window
         self.stack_to_state = self.create_stack_to_state()
-        self.q_tables = {state: self.create_q_table(stack) for stack, state in self.stack_to_state.items()}
-        self.beta_tables = {state: self.softmax(self.q_tables[state]) for state in self.stack_to_state.values()}
+        self.benefit_tables = {state: self.create_benefit_table(stack) for stack, state in self.stack_to_state.items()}
+        self.times = {state: utils.MovingAverage(self.window) for state in self.stack_to_state.values()}
 
         self.uri = "http://localhost:3000"
         self.headers = {'Content-type': 'application/json'}
@@ -37,12 +45,13 @@ class Agent():
         mu = self.query_minimum + self.id * self.query_diff
         return max(self.query_minimum, random.gauss(mu, self.query_std))
 
-    def create_q_table(self, stack):
+    def create_benefit_table(self, stack):
         # TODO: 최대 구매 수량 제한을 에이전트별로 다르게 하는 것도 괜찮을까?
         max_n_actions = (self.max_purchase_quantity // self.amount_bin_size) + 1
         n_actions = (stack // self.amount_bin_size) + 1
         n_actions = min(max_n_actions, n_actions)
-        return np.zeros(n_actions)
+        benefit_table = [utils.MovingAverage(self.window) for _ in range(n_actions)]
+        return benefit_table
 
     def create_stack_to_state(self):
         state_idx = 1
@@ -57,32 +66,49 @@ class Agent():
             state_idx += 1
         return stack_to_state
 
-    def softmax(self, x):
-        if not isinstance(x, np.ndarray):
-            x = np.array(x)
-        x = x / self.temperature
-        e_x = np.exp(x - np.max(x))
-        return e_x / np.sum(e_x)
-
     def set_id(self, id_):
         self.id = id_
 
-    def get_action(self, state, deterministic=False):
-        beta_table = self.beta_tables[state]
-        if deterministic:
-            action = np.random.choice(np.flatnonzero(beta_table == beta_table.max()))
+    def act(self, state, q_eps, p_eps, deterministic=False):
+        benefit_table = self.benefit_tables[state]
+        avg_benefits = np.array([table.avg for table in benefit_table])
+
+        if np.random.random() > q_eps or deterministic:
+            action = np.random.choice(np.array(range(len(avg_benefits)))[avg_benefits == avg_benefits.max()])
         else:
-            action = np.random.choice(np.arange(beta_table.size), 1, p=beta_table)
+            action = np.random.choice(range(len(avg_benefits)))
         action = int(action)
+
+        if action == 0:
+            return action
+
+        amount = action * self.amount_bin_size
+
+        expected_benefit = avg_benefits[action]
+        expected_cost = self.get_cost(amount=amount,
+                                      r=self.rate,
+                                      t=self.times[state].avg)
+
+        if expected_benefit != 0:
+            print("Agent ID: expected B/C: {:.2}/{:.2}".format(expected_benefit, expected_cost))
+
+        if np.random.random() > p_eps or deterministic:
+            if expected_benefit < expected_cost:
+                action = 0
+            else:
+                pass
+        else:
+            if np.random.random() > 0.5:
+                action = 0
+            else:
+                pass
         return action
 
-    def learn(self, state, action, reward):
+    def learn(self, state, action, reward, time):
         try:
-            q1 = self.q_tables[state][action]
-            q2 = reward
+            self.benefit_tables[state][action].update(reward)
+            self.times[state].update(time)
 
-            self.q_tables[state][action] += self.lr * (q2 - q1) / self.beta_tables[state][action]
-            self.beta_tables[state] = self.softmax(self.q_tables[state])
         except IndexError as e:
             print("id: {}, state: {}, action: {}".format(self.id, state, action))
             print({key: len(value) for key, value in self.beta_tables.items()})
@@ -116,7 +142,7 @@ class Agent():
             if stack == 0:
                 break
             state = self.stack_to_state[self.process_stack(stack)]
-            action = self.get_action(state)
+            action = self.act(state, self.q_eps, self.p_eps)
             if action != 0:
                 amount = action * self.amount_bin_size
                 is_successful = self.purchase(amount, self.id)
@@ -135,3 +161,17 @@ class Agent():
         else:
             processed = (stack // self.state_bin_size) * self.state_bin_size
         return processed
+
+    def get_cost(self, amount, r, t):
+        try:
+            # TODO: t의 스케일을 어떻게 조절해야 할 지 모르겠다.
+            # 지금으로써는 3초 지나면 3제곱, 20초 지나면 20제곱으로 엄청나게 크다
+            m = self.price * amount
+            return m * ((1 + r) ** t)
+        except OverflowError as e:
+            print(m, r, t)
+            raise e
+
+    def update_eps(self):
+        self.q_eps *= self.q_eps_decay
+        self.p_eps *= self.p_eps_decay

@@ -1,8 +1,44 @@
 import json
 import requests
+import numpy as np
+from collections import deque
 
 URI = "http://localhost:3000"
 HEADERS = {'Content-type': 'application/json'}
+
+"""
+에이전트의 신용등급 분포
+대출거래고객의 신용등급 분포에 따라 랜덤 배정
+2018년 12월 개인신용평가 관련 통계자료 기준
+http://www.niceinfo.co.kr/creditrating/cb_score_3.nice
+"""
+CREDIT_DIST = np.array([0.2820866, 0.16822173, 0.1433743, 0.11848693, 0.10438483,
+                        0.06542559, 0.03797563, 0.03051768, 0.03119231, 0.0183344])
+
+"""
+상위 5개 은행 대출 이자율의 평균
+은행 순위: 2018년 9월 금감원 금융정보통계시스템 기준
+http://fisis.fss.or.kr/fss/fsiview/indexw_ng.html
+
+에이전트의 신용등급별에 따라 이자율이 다름
+이자율 출처: 전국은행연합회
+https://portal.kfb.or.kr/main/main.php
+"""
+RATES = [0.03734, 0.03734, 0.04508, 0.04508, 0.06042, 0.06042, 0.07946, 0.07946, 0.09475, 0.09475]
+
+
+class MovingAverage:
+    def __init__(self, window):
+        self.table = deque(maxlen=window)
+        self._avg = 0.
+
+    def update(self, item):
+        self.table.append(item)
+        self._avg = np.mean(self.table)
+
+    @property
+    def avg(self):
+        return self._avg
 
 
 def get_time(is_success, timer):
@@ -62,3 +98,9 @@ def set_stack(stack):
 
 def set_timer(timer):
     requests.post(URI + "/setTimer", headers=HEADERS, data=json.dumps({"timer": timer}))
+
+
+def get_interest_rate():
+    credit = np.random.choice(np.arange(10), 1, p=CREDIT_DIST)[0]
+    rate = RATES[credit]
+    return rate
