@@ -139,13 +139,14 @@ def create_log_dir(argv):
         os.mkdir('./logs/')
     my_args = argv
     path_ = []
-    print(my_args)
+    use_equality = ('=' in my_args[1])
+
     for idx in range(1, len(my_args)):
-        if idx % 2 == 1:
+        if use_equality or idx % 2 == 1:
             path_.append(my_args[idx][2:])
         else:
             path_.append(my_args[idx])
-            print(my_args[idx])
+
     path = '_'.join(path_) + '/'
     # 기존에 같은 이름의 폴더가 있을 경우 삭제
     if os.path.isdir('./logs/' + path):
