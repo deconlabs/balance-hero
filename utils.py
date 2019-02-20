@@ -132,3 +132,14 @@ def set_stack(stack):
 def set_timer(timer):
     requests.post(URI + "/setTimer", headers=HEADERS, data=json.dumps({"timer": timer}))
 
+
+def create_log_dir(argv):
+    if not os.path.isdir('./logs/'):
+        os.mkdir('./logs/')
+    my_args = argv
+    path_ = []
+    for idx in range(1, len(my_args)):
+        path_.append(my_args[idx][2:])
+    path = '_'.join(path_) + '/'
+    if not os.path.isdir('./logs/' + path):
+        os.mkdir('./logs/' + path)

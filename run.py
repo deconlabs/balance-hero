@@ -3,11 +3,14 @@ from agent import Agent
 from master import Master
 from arguments import argparser
 import numpy as np
+import sys
 import utils
 
 
 def run():
     args = argparser()
+
+    utils.create_log_dir(sys.argv)
     utils.start(args.http_port, args.log_dir)
 
     env = Env(args)

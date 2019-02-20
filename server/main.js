@@ -7,14 +7,6 @@ var rimraf = require("rimraf");
 
 // set environment variable
 const http_port = process.env.HTTP_PORT || 3000;
-const log_dir = process.env.LOG_DIR || 'logs'
-
-// define utility functions
-const makeFullDir = function(dir) {
-    return "../" + dir + "/";
-};
-
-const fullLogDir = makeFullDir(log_dir);
 
 if (!fs.existsSync(fullLogDir)) {
     fs.mkdirSync(fullLogDir);
