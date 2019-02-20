@@ -53,7 +53,7 @@ def start(http_port, log_dir):
 
     os.chdir("./server")
     os.system("npm install --silent")
-    os.system("HTTP_PORT={} npm start &".format(http_port, log_dir))
+    os.system("HTTP_PORT={} npm start &".format(http_port))
     while True:
         try:
             res = requests.get(URI + "/isConnected")

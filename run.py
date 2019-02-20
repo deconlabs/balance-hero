@@ -40,12 +40,12 @@ def run():
         time_list.append(master.infos["end_time"] - master.infos["start_time"])
 
         if (idx + 1) % 20 == 0:
-            print("="*80)
+            print("=" * 80)
             print("EPISODE {}: Avg. Success Rate / Time: {:.2}/{:.2}"
-                  .format(idx+1, np.mean(success_list), np.mean(time_list)))
+                  .format(idx + 1, np.mean(success_list), np.mean(time_list)))
             success_list.clear()
             time_list.clear()
-            print("="*80)
+            print("=" * 80)
 
     print("끝")
     utils.close()
