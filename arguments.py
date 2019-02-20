@@ -31,7 +31,7 @@ def argparser():
     parser.add_argument('--temperature', type=float, default=2.0,
                         help='temperature for softmax')
     parser.add_argument('--commission_pool', type=float, default=2000.0,
-
+                        help='reserved pool for distributing commision')
     parser.add_argument('--mechanism', type=int, default=0,
                         help='mechanism (0, 1, 2, ...) 추후 추가')
     parser.add_argument('--cp_rate', type=float, default=1.0,
