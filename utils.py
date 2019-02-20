@@ -145,8 +145,8 @@ def create_log_dir(argv):
         path_.append(my_args[idx][2:])
     path = '_'.join(path_) + '/'
     # 기존에 같은 이름의 폴더가 있을 경우 삭제
-    if os.path.isdir('/logs/' + path):
-        shutil.rmtree('/logs/' + path)
+    if os.path.isdir('./logs/' + path):
+        shutil.rmtree('./logs/' + path)
     # 폴더 새로 생성
     os.mkdir('./logs/' + path)
     return path
