@@ -88,8 +88,8 @@ def get_stack():
     return stack
 
 
-def reset():
-    requests.post(URI + "/reset", headers=HEADERS)
+def reset(path):
+    requests.post(URI + "/reset", headers=HEADERS, data=json.dumps({"path": path}))
 
 
 def set_stack(stack):

@@ -3,6 +3,9 @@ from agent import Agent
 from master import Master
 from arguments import argparser
 
+import sys
+import os
+
 
 def run():
     # try:
@@ -13,6 +16,17 @@ def run():
     #     os.chdir("../")
 
     args = argparser()
+
+    """log를 저장할 dir 생성"""
+    if not os.path.isdir('./logs/'):
+        os.mkdir('./logs/')
+    my_args = sys.argv
+    path_ = []
+    for idx in range(1, len(my_args)):
+        path_.append(my_args[idx][2:])
+    path = '_'.join(path_) + '/'
+    if not os.path.isdir('./logs/' + path):
+        os.mkdir('./logs/' + path)
 
     env = Env(args)
     agents = [Agent(args) for _ in range(args.n_agent)]
@@ -26,7 +40,7 @@ def run():
         print("에피소드 {} 초기화".format(idx + 1))
         # 서버의 stack, timer 초기화
         print("서버를 초기화하는중...")
-        master.reset()
+        master.reset(path)
 
         # 에피소드 시작
         print("에피소드 시작...")

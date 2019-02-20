@@ -8,7 +8,7 @@ class Env:
         self.price = args.price
         self.quantity = args.quantity
         self.stack_to_state = self.create_stack_to_state()
-        self.commision_pool = args.commision_pool
+        self.commission_pool = args.commission_pool
         self.mechanism = args.mechanism
         self.cp_rate = args.cp_rate
         self.cp_minimum = args.cp_minimum
@@ -36,7 +36,7 @@ class Env:
         return sum(self.cp_table[when - amount:when])
 
     def get_benefit(self, cp):
-        return self.commision_pool * cp / self.total_cp
+        return self.commission_pool * cp / self.total_cp
 
     def step(self, orderbook, infos):
         amounts, whens, times = self.refine_orderbook(orderbook)
