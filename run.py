@@ -3,17 +3,12 @@ from agent import Agent
 from master import Master
 from arguments import argparser
 import numpy as np
+import utils
 
 
 def run():
-    # try:
-    #     os.chdir("./server")
-    #     os.system("npm install --silent")
-    #     os.system("npm start &")
-    # finally:
-    #     os.chdir("../")
-
     args = argparser()
+    utils.start(args.http_port, args.log_dir)
 
     env = Env(args)
     agents = [Agent(args) for _ in range(args.n_agent)]
@@ -28,16 +23,13 @@ def run():
 
     for idx in range(args.n_episode):
         print('=' * 80)
-        print("에피소드 {} 초기화".format(idx + 1))
+        print("Episode {}".format(idx + 1))
         # 서버의 stack, timer 초기화
-        print("서버를 초기화하는중...")
         master.reset()
 
         # 에피소드 시작
-        print("에피소드 시작...")
         master.start()
         # 에이전트 학습
-        print("에이전트 학습 중...")
         master.train()
         print('=' * 80)
         success_list.append(master.infos["is_success"])
@@ -52,6 +44,7 @@ def run():
             print("="*80)
 
     print("끝")
+    utils.close()
 
 
 if __name__ == '__main__':

@@ -3,9 +3,26 @@ const WebSocket = require("ws");
 const express = require("express");
 const bodyParser = require("body-parser");
 const fs = require("fs");
+var rimraf = require("rimraf");
 
 // set environment variable
 const http_port = process.env.HTTP_PORT || 3000;
+const log_dir = process.env.LOG_DIR || 'logs'
+
+// define utility functions
+const makeFullDir = function(dir) {
+    return "../" + dir + "/";
+};
+
+const fullLogDir = makeFullDir(log_dir);
+
+if (!fs.existsSync(fullLogDir)) {
+    fs.mkdirSync(fullLogDir);
+} else {
+    // if directory with same name already exists, remove that directory
+    rimraf.sync(fullLogDir);
+    fs.mkdirSync(fullLogDir);
+};
 
 // network delay table
 /*
@@ -43,6 +60,13 @@ function initHttpServer() {
             res.send();
         });
     */
+
+    app.get("/isConnected", function (req, res) {
+        res.send({
+            "msg": "SERVER CONNECTED.\n"
+        });
+    });
+
     app.get("/stack", function (req, res) {
         if (stack == -1) {
             res.send({
@@ -157,18 +181,15 @@ function initHttpServer() {
         }
     });
 
-    // TODO: Reset할 때마다 json 파일에 저장하니까 file I/O에 걸리는 시간이 너무 큼
-    // 내부적으로 기록을 하고 있다가 적절한 간격마다 저장을 하게 하는게 좋을 듯함
     app.post("/reset", function (req, res) {
         // write log file
-        if (!fs.existsSync("../logs/")) { fs.mkdirSync("../logs/"); }
 
         var dealTime = 0;
         if (orders.length != 0) {
             dealTime = orders[orders.length - 1]["timestamp"] - orders[0]["timestamp"]
         }
 
-        fs.writeFileSync("../logs/" + getCurrentTimestamp().toString() + ".json",
+        fs.writeFileSync(fullLogDir + getCurrentTimestamp().toString() + ".json",
             JSON.stringify({
                 "dealSuccess": isSuccess,
                 "dealTime": dealTime,

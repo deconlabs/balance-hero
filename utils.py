@@ -2,9 +2,9 @@ import json
 import requests
 import numpy as np
 from collections import deque
+import time
+import os
 
-URI = "http://localhost:3000"
-HEADERS = {'Content-type': 'application/json'}
 
 """
 에이전트의 신용등급 분포
@@ -27,6 +27,10 @@ https://portal.kfb.or.kr/main/main.php
 RATES = [0.03734, 0.03734, 0.04508, 0.04508, 0.06042, 0.06042, 0.07946, 0.07946, 0.09475, 0.09475]
 
 
+URI = "http://localhost:3000"
+HEADERS = {'Content-type': 'application/json'}
+
+
 class MovingAverage:
     def __init__(self, window):
         self.table = deque(maxlen=window)
@@ -39,6 +43,33 @@ class MovingAverage:
     @property
     def avg(self):
         return self._avg
+
+
+def start(http_port, log_dir):
+    global URI
+    URI = "http://localhost:{}".format(http_port)
+
+    os.chdir("./server")
+    os.system("npm install --silent")
+    os.system("HTTP_PORT={} LOG_DIR={} npm start &".format(http_port, log_dir))
+    while True:
+        try:
+            res = requests.get(URI + "/isConnected")
+            msg = json.loads(res.text)["msg"]
+            if "connected" in msg.lower():
+                break
+        except Exception:
+            time.sleep(1)
+            pass
+    os.chdir("../")
+
+
+def close():
+    requests.post(URI + "/stop", headers=HEADERS)
+
+
+def reset():
+    requests.post(URI + "/reset", headers=HEADERS)
 
 
 def get_time(is_success, timer):
@@ -88,8 +119,10 @@ def get_stack():
     return stack
 
 
-def reset():
-    requests.post(URI + "/reset", headers=HEADERS)
+def get_interest_rate():
+    credit = np.random.choice(np.arange(10), 1, p=CREDIT_DIST)[0]
+    rate = RATES[credit]
+    return rate
 
 
 def set_stack(stack):
@@ -99,8 +132,3 @@ def set_stack(stack):
 def set_timer(timer):
     requests.post(URI + "/setTimer", headers=HEADERS, data=json.dumps({"timer": timer}))
 
-
-def get_interest_rate():
-    credit = np.random.choice(np.arange(10), 1, p=CREDIT_DIST)[0]
-    rate = RATES[credit]
-    return rate

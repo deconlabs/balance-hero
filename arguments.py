@@ -4,7 +4,7 @@ import argparse
 def argparser():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--quantity', type=int, default=1000,
+    parser.add_argument('--quantity', type=int, default=500,
                         help='물품 판매 수량')
     parser.add_argument('--price', type=float, default=1.0,
                         help='물품의 가격')
@@ -12,17 +12,17 @@ def argparser():
                         help='딜 진행 시간')
     parser.add_argument('--amount_bin_size', type=int, default=10,
                         help='최소 구매 단위')
-    parser.add_argument('--state_bin_size', type=int, default=100,
+    parser.add_argument('--state_bin_size', type=int, default=50,
                         help='state 단위')
-    parser.add_argument('--max_purchase_quantity', type=int, default=150,
+    parser.add_argument('--max_purchase_quantity', type=int, default=50,
                         help='최대 구매 수량')
-    parser.add_argument('--n_agent', type=int, default=15,
+    parser.add_argument('--n_agent', type=int, default=20,
                         help='에이전트 수')
-    parser.add_argument('--n_episode', type=int, default=1000,
+    parser.add_argument('--n_episode', type=int, default=10,
                         help='에피소드 수')
     parser.add_argument('--lr', type=float, default=0.01,
                         help='learning rate')
-    parser.add_argument('--window', type=int, default=50,
+    parser.add_argument('--window', type=int, default=20,
                         help='State마다 저장되는 time의 moving mean window size')
     parser.add_argument('--q_eps_decay', type=float, default=0.998,
                         help='decay rate for q_eps')
@@ -30,7 +30,7 @@ def argparser():
                         help='decay rate for p_eps')
     parser.add_argument('--temperature', type=float, default=2.0,
                         help='temperature for softmax')
-    parser.add_argument('--commision_pool', type=float, default=2000.0,
+    parser.add_argument('--commision_pool', type=float, default=100.0,
                         help='reserved pool for distributing commision')
     parser.add_argument('--mechanism', type=int, default=0,
                         help='mechanism (0, 1, 2, ...) 추후 추가')
@@ -44,6 +44,11 @@ def argparser():
                         help='에이전트간 쿼리 인터벌 차이 비율')
     parser.add_argument('--query_std', type=float, default=0.01,
                         help='쿼리 정규분포에 사용되는 표준편차')
+
+    parser.add_argument('--http_port', type=str, default='3000',
+                        help='서버가 이용할 포트')
+    parser.add_argument('--log_dir', type=str, default='logs',
+                        help='로그를 저장할 디렉토리')
 
     args = parser.parse_args()
     return args

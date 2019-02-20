@@ -91,9 +91,7 @@ class Agent():
         expected_cost = self.get_cost(amount=amount,
                                       r=self.rate,
                                       t=self.times[state].avg)
-
-        if expected_benefit != 0:
-            print("Agent ID: expected B/C: {:.2}/{:.2}".format(expected_benefit, expected_cost))
+        # print("id {}: B/C = {:.2}/{:.2}".format(self.id, expected_benefit, expected_cost))
 
         if np.random.random() > p_eps or deterministic:
             if expected_benefit < expected_cost:
@@ -144,6 +142,7 @@ class Agent():
             stack = utils.get_stack()
             if stack == 0:
                 break
+
             state = self.stack_to_state[self.process_stack(stack)]
             action = self.act(state, self.q_eps, self.p_eps)
             if action != 0:
