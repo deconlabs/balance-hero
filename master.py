@@ -31,7 +31,7 @@ class Master:
         assert start_time != -1
         self.infos["start_time"] = start_time
 
-        for id_, agent in self.agents.items():
+        for _, agent in self.agents.items():
             agent.update_eps()
 
     def start(self):
@@ -52,7 +52,7 @@ class Master:
             proc = Process(target=f, args=(is_alive, ))
             proc.start()
             procs.append(proc)
-            for id_, agent in self.agents.items():
+            for _, agent in self.agents.items():
                 proc = Process(target=agent.start, args=(cnt, is_alive, s_a_dict, len(self.agents)))
                 procs.append(proc)
                 proc.start()
