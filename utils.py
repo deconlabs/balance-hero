@@ -135,14 +135,17 @@ def set_timer(timer):
 
 
 def create_log_dir(argv):
-    # TODO: sys.argv가 아니라 원하는 대로 폴더명 만들어지게끔 바꾸는 것이 더 보기 좋을듯
-    # 지금은 이상한 폴더명으로 생성됨
     if not os.path.isdir('./logs/'):
         os.mkdir('./logs/')
     my_args = argv
     path_ = []
+    print(my_args)
     for idx in range(1, len(my_args)):
-        path_.append(my_args[idx][2:])
+        if idx % 2 == 1:
+            path_.append(my_args[idx][2:])
+        else:
+            path_.append(my_args[idx])
+            print(my_args[idx])
     path = '_'.join(path_) + '/'
     # 기존에 같은 이름의 폴더가 있을 경우 삭제
     if os.path.isdir('./logs/' + path):
