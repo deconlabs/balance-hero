@@ -2,6 +2,7 @@ from env import Env
 from agent import Agent
 from master import Master
 from arguments import argparser
+import numpy as np
 
 
 def run():
@@ -22,7 +23,11 @@ def run():
         master.add_agent(agent)
     master.add_env(env)
 
+    success_list = []
+    time_list = []
+
     for idx in range(args.n_episode):
+        print('=' * 80)
         print("에피소드 {} 초기화".format(idx + 1))
         # 서버의 stack, timer 초기화
         print("서버를 초기화하는중...")
@@ -34,6 +39,17 @@ def run():
         # 에이전트 학습
         print("에이전트 학습 중...")
         master.train()
+        print('=' * 80)
+        success_list.append(master.infos["is_success"])
+        time_list.append(master.infos["end_time"] - master.infos["start_time"])
+
+        if (idx + 1) % 20 == 0:
+            print("="*80)
+            print("EPISODE {}: Avg. Success Rate / Time: {:.2}/{:.2}"
+                  .format(idx+1, np.mean(success_list), np.mean(time_list)))
+            success_list.clear()
+            time_list.clear()
+            print("="*80)
 
     print("끝")
 
