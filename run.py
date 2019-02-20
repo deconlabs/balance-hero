@@ -5,12 +5,15 @@ from arguments import argparser
 import numpy as np
 import sys
 import utils
+from visualization import visualize
 
 
 def run():
     args = argparser()
 
     path = utils.create_log_dir(sys.argv)
+    # print("path" , path)
+    # sys.exit()
     utils.start(args.http_port, args.log_dir)
 
     env = Env(args)
@@ -47,6 +50,8 @@ def run():
             time_list.clear()
             print("="*80)
 
+    if args.visual :
+        visualize(path)
     print("끝")
     utils.close()
 

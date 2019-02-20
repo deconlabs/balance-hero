@@ -3,7 +3,8 @@ import argparse
 
 def argparser():
     parser = argparse.ArgumentParser()
-
+    parser.add_argument('--visual', type=bool, default=True,
+                        help='물품 판매 수량')
     parser.add_argument('--quantity', type=int, default=500,
                         help='물품 판매 수량')
     parser.add_argument('--price', type=float, default=1.0,
