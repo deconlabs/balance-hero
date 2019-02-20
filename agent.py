@@ -106,14 +106,8 @@ class Agent():
         return action
 
     def learn(self, state, action, reward, time):
-        try:
-            self.benefit_tables[state][action].update(reward)
-            self.times[state].update(time)
-
-        except IndexError as e:
-            print("id: {}, state: {}, action: {}".format(self.id, state, action))
-            print({key: len(value) for key, value in self.beta_tables.items()})
-            raise e
+        self.benefit_tables[state][action].update(reward)
+        self.times[state].update(time)
 
     def purchase(self, amount, id_):
         data = json.dumps({
