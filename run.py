@@ -50,7 +50,7 @@ def run():
             time_list.clear()
             print("=" * 80)
 
-    if args.visual :
+    if args.visual:
         visualize(path)
     print("끝")
     utils.close()

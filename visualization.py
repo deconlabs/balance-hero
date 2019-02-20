@@ -1,9 +1,13 @@
-import matplotlib
-matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
 import os
+import glob
+import json
+import matplotlib
+
+matplotlib.use('Agg')
+
 
 def draw_success_rate_graph(n_episode, window, success_rate, path):
     plt.plot(np.arange(n_episode) + window, success_rate, label='success_rate')
@@ -30,12 +34,13 @@ def draw_dealtime_graph(n_episode, deal_time, path):
     middle_path = os.path.join('images', path)
     if not os.path.exists(middle_path):
         os.makedirs(middle_path)
-    plt.savefig(os.path.join(middle_path,"deal_time.png"))
+    plt.savefig(os.path.join(middle_path, "deal_time.png"))
     plt.close()
 
-    print(os.path.join(middle_path,"deal_time.png")+'is drawn' )
+    print(os.path.join(middle_path, "deal_time.png") + 'is drawn')
 
-def draw_purchase_graph(orderbook, start_time, quantity, path,idx):
+
+def draw_purchase_graph(orderbook, start_time, quantity, path, idx):
     prev_point = (0, quantity)
     for order in orderbook:
         id_ = order['id']
@@ -58,13 +63,8 @@ def draw_purchase_graph(orderbook, start_time, quantity, path,idx):
     plt.close()
 
 
-import os
-import glob
-import json
-
-
 def visualize(path, args=None):
-    json_files = glob.glob(os.path.join('logs',path, '*'))
+    json_files = glob.glob(os.path.join('logs', path, '*'))
     print(json_files)
     success_rate = []
     deal_time = []
@@ -78,15 +78,15 @@ def visualize(path, args=None):
             orders.append(data['orders'])
             start_times.append(data['startTime'])
 
-    suc_rate = [np.mean(success_rate[i:i + 20]) for i in range(len(success_rate) - 20)]
-
+    suc_rate = [np.mean(success_rate[i:i + 20])
+                for i in range(len(success_rate) - 20)]
 
     draw_success_rate_graph(len(suc_rate), 20, suc_rate, path)
     draw_dealtime_graph(len(deal_time), deal_time, path)
     idx = 0
     for orderbook, start_time in zip(orders, start_times):
-        if start_time != -1 :
-            draw_purchase_graph(orderbook, start_time, 1000,  path, idx )
+        if start_time != -1:
+            draw_purchase_graph(orderbook, start_time, 1000, path, idx)
             print('{}th purchase graph was drawn'.format(idx))
             idx += 1
 
