@@ -49,6 +49,8 @@ class Env:
             # 실패한 경우 딜이 끝난 시간은 시작한 시간 + 딜 진행 시간
             end_time = infos["start_time"] + infos["timer"]
 
+        infos["end_time"] = end_time
+
         for id_ in times.keys():
             times[id_] = (end_time - times[id_]) / 1000.  # millisecond
 

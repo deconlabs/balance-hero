@@ -18,6 +18,9 @@ class Agent():
         self.rate = utils.get_interest_rate()
         self.price = args.price
 
+        # TODO: epsilon을 state마다 따로 둘까? 아니면 action마다 따로 둬야 하나?
+        # TODO: Q_Epsilon은 State마다 따로 두고,
+        # TODO: P_Epsilon은 (State,Action)마다 따로 줄까?
         self.q_eps = 1.0
         self.p_eps = 1.0
         self.q_eps_decay = args.q_eps_decay
@@ -146,8 +149,8 @@ class Agent():
             if action != 0:
                 amount = action * self.amount_bin_size
                 is_successful = self.purchase(amount, self.id)
-                print("id: {}, state: {}, action: {}, amount: {}, success: {}"
-                      .format(self.id, state, action, amount, is_successful))
+                # print("id: {}, state: {}, action: {}, amount: {}, success: {}"
+                #       .format(self.id, state, action, amount, is_successful))
                 if is_successful:
                     # 성공적으로 구매를 했다면 구매 당시의 (state, action)을 s_a_dict에 기록
                     s_a_dict[self.id] = {"state": state, "action": action}
