@@ -5,6 +5,7 @@ from collections import deque
 import time
 import os
 import shutil
+from datetime import datetime
 
 
 """
@@ -139,7 +140,12 @@ def create_log_dir(argv):
         os.mkdir('./logs/')
     my_args = argv
     path_ = []
-    use_equality = ('=' in my_args[1])
+    if len(my_args) != 1:
+        use_equality = ('=' in my_args[1])
+    else:
+        use_equality = False
+        now = datetime.now().isoformat()
+        path_.append(now)
 
     for idx in range(1, len(my_args)):
         if use_equality or idx % 2 == 1:
