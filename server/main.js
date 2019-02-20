@@ -168,11 +168,7 @@ function initHttpServer() {
         
         // write log file
         if (!fs.existsSync("../logs/")) { fs.mkdirSync("../logs/"); }
-        if (!fs.existsSync("../logs/" + path)) {
-            fs.mkdirSync("../logs/" + path);
-        } else {
-            fs.mkdirSync("../logs/" + path);
-        }
+        if (!fs.existsSync("../logs/" + path)) { fs.mkdirSync("../logs/" + path); }
 
         var dealTime = 0;
         if (orders.length != 0) {

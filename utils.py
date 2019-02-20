@@ -4,6 +4,7 @@ import numpy as np
 from collections import deque
 import time
 import os
+import shutil
 
 
 """
@@ -143,6 +144,9 @@ def create_log_dir(argv):
     for idx in range(1, len(my_args)):
         path_.append(my_args[idx][2:])
     path = '_'.join(path_) + '/'
-    if not os.path.isdir('./logs/' + path):
-        os.mkdir('./logs/' + path)
+    # 기존에 같은 이름의 폴더가 있을 경우 삭제
+    if os.path.isdir('/logs/' + path):
+        shutil.rmtree('/logs/' + path)
+    # 폴더 새로 생성
+    os.mkdir('./logs/' + path)
     return path
