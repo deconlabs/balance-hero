@@ -21,8 +21,8 @@ class Master:
     def add_env(self, env):
         self.env = env
 
-    def reset(self):
-        utils.reset()
+    def reset(self, path):
+        utils.reset(path)
         utils.set_stack(self.quantity)
         utils.set_timer(self.timer)
 
