@@ -175,6 +175,7 @@ function initHttpServer() {
             JSON.stringify({
                 "dealSuccess": isSuccess,
                 "dealTime": dealTime,
+                "startTime": startTime,
                 "orders": orders
             }),
             "utf-8")
