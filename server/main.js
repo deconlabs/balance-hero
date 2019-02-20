@@ -113,8 +113,6 @@ function initHttpServer() {
         t = setTimeout(function () {
             console.log("Stopping server\n");
             // process.exit();
-            timer = -1;
-            startTime = -1;
             isAlive = false;
 
             if (stack == 0) { isSuccess = true; }
@@ -126,7 +124,7 @@ function initHttpServer() {
     });
 
     app.post("/purchase", function (req, res) {
-        if (timer == -1) { res.send({ "msg": "MUST SET TIMER FIRST.\n" }); }
+        if (!isAlive) { res.send({ "msg": "START SERVER FIRST.\n" }); }
         else {
             var amount = req.body.amount;
             if (amount <= 0 || stack - amount < 0) { res.send({ "msg": "INVALID AMOUNT.\n" }); }
