@@ -171,7 +171,6 @@ function initHttpServer() {
         if (!fs.existsSync("../logs/" + path)) {
             fs.mkdirSync("../logs/" + path);
         } else {
-            rimraf.sync("../logs/" + path);
             fs.mkdirSync("../logs/" + path);
         }
 
