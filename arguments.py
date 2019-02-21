@@ -21,16 +21,12 @@ def argparser():
                         help='에이전트 수')
     parser.add_argument('--n_episode', type=int, default=1000,
                         help='에피소드 수')
-    parser.add_argument('--lr', type=float, default=0.01,
-                        help='learning rate')
     parser.add_argument('--window', type=int, default=20,
                         help='State마다 저장되는 time의 moving mean window size')
     parser.add_argument('--q_eps_decay', type=float, default=0.998,
                         help='decay rate for q_eps')
     parser.add_argument('--p_eps_decay', type=float, default=0.998,
                         help='decay rate for p_eps')
-    parser.add_argument('--temperature', type=float, default=2.0,
-                        help='temperature for softmax')
     parser.add_argument('--commission_pool', type=float, default=100.0,
                         help='reserved pool for distributing commision')
     parser.add_argument('--mechanism', type=int, default=0,
@@ -50,6 +46,11 @@ def argparser():
                         help='서버가 이용할 포트')
     parser.add_argument('--vis_dir', type=str, default='_',
                         help='Visualization을 CLI에서 실행하기 위한 argument')
+
+    parser.add_argument('--print_interval', type=int, default=20,
+                        help='터미널 출력 간격')
+    parser.add_argument('--checkpoint_interval', type=int, default=50,
+                        help='체크포인트 저장 간격')
 
     args = parser.parse_args()
     return args

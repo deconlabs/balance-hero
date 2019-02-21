@@ -6,6 +6,7 @@ import time
 import os
 import shutil
 from datetime import datetime
+import _pickle as cPickle
 
 
 """
@@ -160,3 +161,23 @@ def create_log_dir(argv):
     # 폴더 새로 생성
     os.mkdir('./logs/' + path)
     return path
+
+
+def save_checkpoints(path, data, idx):
+    import time
+    t0 = time.time()
+    checkpoint_path = os.path.join('checkpoints', path)
+    if not os.path.isdir(checkpoint_path):
+        os.makedirs(checkpoint_path, exist_ok=True)
+    with open(os.path.join(checkpoint_path, '{}.pkl'.format(idx)), 'wb') as f:
+        cPickle.dump(data, f)
+
+    files = os.listdir(checkpoint_path)
+    if len(files) > 10:
+        sorted_files = sorted(files, key=lambda x: int(x[:-4]))
+        file_to_remove = os.path.join(checkpoint_path, sorted_files[0])
+        print(sorted_files)
+        print(file_to_remove)
+        os.remove(file_to_remove)
+    t1 = time.time()
+    print("Checkpoint Saving Time: {:.2}s".format(t1 - t0))

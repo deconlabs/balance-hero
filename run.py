@@ -40,13 +40,16 @@ def run():
         success_list.append(master.infos["is_success"])
         time_list.append(master.infos["end_time"] - master.infos["start_time"])
 
-        if (idx + 1) % 20 == 0:
+        if (idx + 1) % args.print_interval == 0:
             print("=" * 80)
             print("EPISODE {}: Avg. Success Rate / Time: {:.2} / {:.2}"
                   .format(idx + 1, np.mean(success_list), np.mean(time_list)))
             success_list.clear()
             time_list.clear()
             print("=" * 80)
+
+        if (idx + 1) % args.checkpoint_interval == 0:
+            utils.save_checkpoints(path, agents, idx+1)
 
     if args.visual:
         visualize(path, args)

@@ -13,8 +13,6 @@ class Agent():
         self.amount_bin_size = args.amount_bin_size
         self.state_bin_size = args.state_bin_size
 
-        self.temperature = args.temperature
-        self.lr = args.lr
         self.rate = utils.get_interest_rate()
         self.price = args.price
 

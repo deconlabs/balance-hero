@@ -86,7 +86,7 @@ def visualize(path, args=None):
             orders.append(data['orders'])
             start_times.append(data['startTime'])
 
-    suc_rate = [np.mean(success_rate[i:i + 20]) for i in range(len(success_rate) - 20)]
+    suc_rate = [np.mean(success_rate[i:i + args.window]) for i in range(len(success_rate) - args.window)]
 
     draw_success_rate_graph(len(suc_rate), args.window, suc_rate, path)
     draw_dealtime_graph(len(deal_time), deal_time, path)
