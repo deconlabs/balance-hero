@@ -91,7 +91,6 @@ class Agent():
         expected_cost = self.get_cost(amount=amount,
                                       r=self.rate,
                                       t=self.times[state].avg)
-        # print("id {}: B/C = {:.2}/{:.2}".format(self.id, expected_benefit, expected_cost))
 
         if np.random.random() > p_eps or deterministic:
             if expected_benefit < expected_cost:
@@ -103,6 +102,10 @@ class Agent():
                 action = 0
             else:
                 pass
+
+        print("id {:03d}: B/C = {:05.2f}/{:05.2f}, diff: {:+06.2f}, action: {}"
+              .format(self.id, expected_benefit, expected_cost, expected_benefit - expected_cost, action))
+
         return action
 
     def learn(self, state, action, reward, time):
@@ -160,8 +163,6 @@ class Agent():
 
     def get_cost(self, amount, r, t):
         try:
-            # TODO: t의 스케일을 어떻게 조절해야 할 지 모르겠다.
-            # 지금으로써는 3초 지나면 3제곱, 20초 지나면 20제곱으로 엄청나게 크다
             m = self.price * amount
             return m * ((1 + r) ** t)
         except OverflowError as e:

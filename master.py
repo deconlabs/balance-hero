@@ -41,7 +41,7 @@ class Master:
         def f(is_alive):
             while True:
                 if not utils.get_is_alive():
-                    print("서버가 죽었어요!")
+                    # print("서버가 죽었어요!")
                     is_alive.value = 0
                     break
                 time.sleep(1)

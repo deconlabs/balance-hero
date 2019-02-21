@@ -12,7 +12,7 @@ matplotlib.use('Agg')
 
 def draw_success_rate_graph(n_episode, window, success_rate, path):
     plt.plot(np.arange(n_episode) + window, success_rate, label='success_rate')
-    plt.title("success_rate_recent20")
+    plt.title("success_rate_recent_" + str(window))
     plt.xlabel("Episodes")
     plt.ylabel("success_rate(%)")
 
@@ -77,7 +77,7 @@ def visualize(path, args=None):
             orders.append(data['orders'])
             start_times.append(data['startTime'])
 
-    suc_rate = [np.mean(success_rate[i:i + 20]) for i in range(len(success_rate) - 20)]
+    suc_rate = [np.mean(success_rate[i:i + args.window]) for i in range(len(success_rate) - args.window)]
     # print(suc_rate)
 
     draw_success_rate_graph(len(suc_rate), args.window, suc_rate, path)
