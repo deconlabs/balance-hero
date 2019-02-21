@@ -63,7 +63,8 @@ def draw_dealtime_graph(n_episode, deal_time, timer, path):
     plt.close()
 
 
-def draw_purchase_graph(orderbook, start_time, quantity, timer, path, idx):
+def draw_purchase_graph(orderbook, start_time, timer, path, idx):
+    quantity = np.max([order["when"] for order in orderbook])
     prev_point = (0, quantity)
     for order in orderbook:
         id_ = order['id']
@@ -72,14 +73,15 @@ def draw_purchase_graph(orderbook, start_time, quantity, timer, path, idx):
 
         next_point = (timestamp - start_time, prev_point[1] - amount)
         plt.plot(*list(zip(prev_point, next_point)), label=id_)
-        plt.xlim(0, timer)
-        plt.ylim(0, quantity)
-        plt.xlabel("Deal_time(ms)")
-        plt.ylabel("remain_amount")
-        plt.title("purchase tracker")
         plt.annotate(id_, xy=prev_point)
 
         prev_point = next_point
+
+    plt.xlim(0, timer)
+    plt.ylim(0, quantity)
+    plt.xlabel("Deal_time(ms)")
+    plt.ylabel("remain_amount")
+    plt.title("purchase tracker")
 
     middle_path = os.path.join('images', path)
     if not os.path.exists(middle_path):
@@ -111,7 +113,7 @@ def visualize(path, args=None):
     idx = 0
     for orderbook, start_time in zip(orders, start_times):
         if start_time != -1:
-            draw_purchase_graph(orderbook, start_time, args.quantity, args.timer, path, idx)
+            draw_purchase_graph(orderbook, start_time, args.timer, path, idx)
             idx += 1
 
 
