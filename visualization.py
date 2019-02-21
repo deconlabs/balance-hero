@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
-from scipy.interpolate import make_interp_spline
 import numpy as np
+import seaborn as sns
 import os
 import glob
 import json
@@ -12,42 +12,58 @@ matplotlib.use('Agg')
 def draw_success_rate_graph(n_episode, window, success_rate, path):
     xx = np.arange(n_episode) + window
     yy = success_rate
-    new_xx = np.linspace(xx.min(), xx.max())
-    spline = make_interp_spline(xx, yy, k=3)
-    power_smooth = spline(new_xx)
+    cmap = plt.get_cmap("tab10")
 
-    plt.plot(new_xx, power_smooth, label='success_rate')
-    plt.title("success_rate_recent20")
-    plt.xlabel("Episodes")
-    plt.ylabel("success_rate(%)")
+    ax = sns.regplot(xx, yy, order=5, color=cmap(0),
+                     scatter_kws={"alpha": 0.}, ci=None, truncate=True)
+
+    ax.plot(xx, yy, label='Success Rate', color=cmap(0), alpha=0.3)
+    ax.set_title("success_rate_recent20")
+    ax.set_xlabel("Episodes")
+    ax.set_ylabel("success_rate(%)")
+
+    # Ignore Outliers
+    ylim_cnt = max(int(len(yy) * 0.2), 1)
+    sorted_yy = sorted(yy)
+    ylim_min = np.mean(sorted_yy[:ylim_cnt])
+    ylim_max = np.mean(sorted_yy[-ylim_cnt:])
+    ax.set_ylim(ylim_min - 0.02, ylim_max + 0.05)
 
     middle_path = os.path.join('images', path)
     if not os.path.exists(middle_path):
         os.makedirs(middle_path)
-    plt.savefig(os.path.join(middle_path, "success_rate.png"))
+    plt.savefig(os.path.join(middle_path, "success_rate.png"), dpi=300)
     plt.close()
 
 
-def draw_dealtime_graph(n_episode, deal_time, path):
+def draw_dealtime_graph(n_episode, deal_time, timer, path):
     xx = np.arange(n_episode)
     yy = deal_time
-    new_xx = np.linspace(xx.min(), xx.max())
-    spline = make_interp_spline(xx, yy, k=3)
-    power_smooth = spline(new_xx)
+    cmap = plt.get_cmap("tab10")
 
-    plt.plot(new_xx, power_smooth, label='deal_time')
-    plt.title("deal_time_trend(ms)")
-    plt.xlabel("Episodes")
-    plt.ylabel("deal_time")
+    ax = sns.regplot(xx, yy, order=5, color=cmap(0),
+                     scatter_kws={"alpha": 0.}, ci=None, truncate=True)
+
+    ax.plot(xx, yy, label='Deal Time', color=cmap(0), alpha=0.3)
+    ax.set_title("Deal Time Trend(ms)")
+    ax.set_xlabel("Episodes")
+    ax.set_ylabel("Deal Time")
+
+    # Ignore Outliers
+    ylim_cnt = max(int(len(yy) * 0.2), 1)
+    sorted_yy = sorted(yy)
+    ylim_min = np.mean(sorted_yy[:ylim_cnt])
+    ylim_max = np.mean(sorted_yy[-ylim_cnt:])
+    ax.set_ylim(ylim_min - 10, ylim_max + 10)
 
     middle_path = os.path.join('images', path)
     if not os.path.exists(middle_path):
         os.makedirs(middle_path)
-    plt.savefig(os.path.join(middle_path, "deal_time.png"))
+    plt.savefig(os.path.join(middle_path, "deal_time.png"), dpi=300)
     plt.close()
 
 
-def draw_purchase_graph(orderbook, start_time, quantity, path, idx):
+def draw_purchase_graph(orderbook, start_time, quantity, timer, path, idx):
     prev_point = (0, quantity)
     for order in orderbook:
         id_ = order['id']
@@ -56,6 +72,8 @@ def draw_purchase_graph(orderbook, start_time, quantity, path, idx):
 
         next_point = (timestamp - start_time, prev_point[1] - amount)
         plt.plot(*list(zip(prev_point, next_point)), label=id_)
+        plt.xlim(0, timer)
+        plt.ylim(0, quantity)
         plt.xlabel("Deal_time(ms)")
         plt.ylabel("remain_amount")
         plt.title("purchase tracker")
@@ -66,7 +84,7 @@ def draw_purchase_graph(orderbook, start_time, quantity, path, idx):
     middle_path = os.path.join('images', path)
     if not os.path.exists(middle_path):
         os.makedirs(middle_path)
-    plt.savefig(os.path.join(middle_path, "purchase_amount_{}".format(idx)))
+    plt.savefig(os.path.join(middle_path, "purchase_amount_{}".format(idx)), dpi=300)
     plt.close()
 
 
@@ -86,14 +104,14 @@ def visualize(path, args=None):
             orders.append(data['orders'])
             start_times.append(data['startTime'])
 
-    suc_rate = [np.mean(success_rate[i:i + args.window]) for i in range(len(success_rate) - args.window)]
+    suc_rate = [np.mean(success_rate[i:i + args.window]) for i in range(0, len(success_rate) - args.window)]
 
     draw_success_rate_graph(len(suc_rate), args.window, suc_rate, path)
-    draw_dealtime_graph(len(deal_time), deal_time, path)
+    draw_dealtime_graph(len(deal_time), deal_time, args.timer, path)
     idx = 0
     for orderbook, start_time in zip(orders, start_times):
         if start_time != -1:
-            draw_purchase_graph(orderbook, start_time, args.quantity, path, idx)
+            draw_purchase_graph(orderbook, start_time, args.quantity, args.timer, path, idx)
             idx += 1
 
 
