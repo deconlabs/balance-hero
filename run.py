@@ -51,7 +51,7 @@ def run():
             print("=" * 80)
 
     if args.visual:
-        visualize(path)
+        visualize(path,args)
     print("끝")
     utils.close()
 

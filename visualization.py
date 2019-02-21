@@ -1,20 +1,17 @@
+import matplotlib
+
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
 import os
-import glob
-import json
-import matplotlib
-
-matplotlib.use('Agg')
-
+from arguments import argparser
 
 def draw_success_rate_graph(n_episode, window, success_rate, path):
     plt.plot(np.arange(n_episode) + window, success_rate, label='success_rate')
     plt.title("success_rate_recent20")
     plt.xlabel("Episodes")
     plt.ylabel("success_rate(%)")
-    plt.show()
 
     middle_path = os.path.join('images', path)
     if not os.path.exists(middle_path):
@@ -29,7 +26,6 @@ def draw_dealtime_graph(n_episode, deal_time, path):
     plt.title("deal_time_trend(ms)")
     plt.xlabel("Episodes")
     plt.ylabel("deal_time")
-    plt.show()
 
     middle_path = os.path.join('images', path)
     if not os.path.exists(middle_path):
@@ -63,6 +59,11 @@ def draw_purchase_graph(orderbook, start_time, quantity, path, idx):
     plt.close()
 
 
+import os
+import glob
+import json
+
+
 def visualize(path, args=None):
     json_files = glob.glob(os.path.join('logs', path, '*'))
     print(json_files)
@@ -78,10 +79,10 @@ def visualize(path, args=None):
             orders.append(data['orders'])
             start_times.append(data['startTime'])
 
-    suc_rate = [np.mean(success_rate[i:i + 20])
-                for i in range(len(success_rate) - 20)]
+    suc_rate = [np.mean(success_rate[i:i + 20]) for i in range(len(success_rate) - 20)]
+    print(suc_rate)
 
-    draw_success_rate_graph(len(suc_rate), 20, suc_rate, path)
+    draw_success_rate_graph(len(suc_rate), args.window, suc_rate, path)
     draw_dealtime_graph(len(deal_time), deal_time, path)
     idx = 0
     for orderbook, start_time in zip(orders, start_times):
@@ -92,4 +93,5 @@ def visualize(path, args=None):
 
 
 if __name__ == '__main__':
-    visualize(path=sys.argv[1], )
+    args = argparser()
+    visualize(sys.argv[1], args)
