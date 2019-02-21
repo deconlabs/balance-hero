@@ -1,4 +1,5 @@
 import matplotlib
+
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
@@ -10,12 +11,11 @@ from arguments import argparser
 
 
 def draw_success_rate_graph(n_episode, window, success_rate, path):
-    xx = np.arange(n_episode) + window
+    xx = np.arange(n_episode)
     yy = success_rate
     cmap = plt.get_cmap("tab10")
 
-    ax = sns.regplot(xx, yy, order=5, color=cmap(0),
-                     scatter_kws={"alpha": 0.}, ci=None, truncate=True)
+    ax = sns.regplot(xx, yy, order=5, color=cmap(0),truncate=True)
 
     ax.plot(xx, yy, label='Success Rate', color=cmap(0), alpha=0.3)
     ax.set_title("success_rate_recent20")
@@ -38,11 +38,10 @@ def draw_success_rate_graph(n_episode, window, success_rate, path):
 
 def draw_dealtime_graph(n_episode, deal_time, timer, path):
     xx = np.arange(n_episode)
-    yy = deal_time
+    yy = np.array(deal_time)
     cmap = plt.get_cmap("tab10")
 
-    ax = sns.regplot(xx, yy, order=5, color=cmap(0),
-                     scatter_kws={"alpha": 0.}, ci=None, truncate=True)
+    ax = sns.regplot(xx, yy, order=5, color=cmap(0),)
 
     ax.plot(xx, yy, label='Deal Time', color=cmap(0), alpha=0.3)
     ax.set_title("Deal Time Trend(ms)")
@@ -94,21 +93,21 @@ def visualize(path, args=None):
     if path.startswith('logs/'):
         path = path[5:]
     json_files = glob.glob(os.path.join('logs', path, '*'))
-    success_rate = []
+    is_success = []
     deal_time = []
     orders = []
     start_times = []
     for file in json_files:
         with open(file) as f:
             data = json.load(f)
-            success_rate.append(data['dealSuccess'])
+            is_success.append(data['dealSuccess'])
             deal_time.append(data['dealTime'])
             orders.append(data['orders'])
             start_times.append(data['startTime'])
 
-    suc_rate = [np.mean(success_rate[i:i + args.window]) for i in range(0, len(success_rate) - args.window)]
+    is_success = np.array([1 if x else 0 for x in is_success])
 
-    draw_success_rate_graph(len(suc_rate), args.window, suc_rate, path)
+    draw_success_rate_graph(len(is_success), args.window, is_success, path)
     draw_dealtime_graph(len(deal_time), deal_time, args.timer, path)
     idx = 0
     for orderbook, start_time in zip(orders, start_times):
