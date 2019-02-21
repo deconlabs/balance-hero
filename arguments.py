@@ -48,6 +48,8 @@ def argparser():
 
     parser.add_argument('--http_port', type=str, default='3000',
                         help='서버가 이용할 포트')
+    parser.add_argument('--vis_dir', type=str, default='_',
+                        help='Visualization을 CLI에서 실행하기 위한 argument')
 
     args = parser.parse_args()
     return args

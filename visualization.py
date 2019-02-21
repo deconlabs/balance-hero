@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
+from scipy.interpolate import make_interp_spline
 import numpy as np
-import sys
 import os
 import glob
 import json
@@ -10,7 +10,13 @@ matplotlib.use('Agg')
 
 
 def draw_success_rate_graph(n_episode, window, success_rate, path):
-    plt.plot(np.arange(n_episode) + window, success_rate, label='success_rate')
+    xx = np.arange(n_episode) + window
+    yy = success_rate
+    new_xx = np.linspace(xx.min(), xx.max())
+    spline = make_interp_spline(xx, yy, k=3)
+    power_smooth = spline(new_xx)
+
+    plt.plot(new_xx, power_smooth, label='success_rate')
     plt.title("success_rate_recent20")
     plt.xlabel("Episodes")
     plt.ylabel("success_rate(%)")
@@ -20,11 +26,16 @@ def draw_success_rate_graph(n_episode, window, success_rate, path):
         os.makedirs(middle_path)
     plt.savefig(os.path.join(middle_path, "success_rate.png"))
     plt.close()
-    # print('drew success_rate_graph !')
 
 
 def draw_dealtime_graph(n_episode, deal_time, path):
-    plt.plot(np.arange(n_episode), deal_time, label='deal_time')
+    xx = np.arange(n_episode)
+    yy = deal_time
+    new_xx = np.linspace(xx.min(), xx.max())
+    spline = make_interp_spline(xx, yy, k=3)
+    power_smooth = spline(new_xx)
+
+    plt.plot(new_xx, power_smooth, label='deal_time')
     plt.title("deal_time_trend(ms)")
     plt.xlabel("Episodes")
     plt.ylabel("deal_time")
@@ -34,8 +45,6 @@ def draw_dealtime_graph(n_episode, deal_time, path):
         os.makedirs(middle_path)
     plt.savefig(os.path.join(middle_path, "deal_time.png"))
     plt.close()
-
-    # print(os.path.join(middle_path, "deal_time.png") + 'is drawn')
 
 
 def draw_purchase_graph(orderbook, start_time, quantity, path, idx):
@@ -62,6 +71,8 @@ def draw_purchase_graph(orderbook, start_time, quantity, path, idx):
 
 
 def visualize(path, args=None):
+    if path.startswith('logs/'):
+        path = path[5:]
     json_files = glob.glob(os.path.join('logs', path, '*'))
     success_rate = []
     deal_time = []
@@ -76,18 +87,16 @@ def visualize(path, args=None):
             start_times.append(data['startTime'])
 
     suc_rate = [np.mean(success_rate[i:i + 20]) for i in range(len(success_rate) - 20)]
-    # print(suc_rate)
 
     draw_success_rate_graph(len(suc_rate), args.window, suc_rate, path)
     draw_dealtime_graph(len(deal_time), deal_time, path)
     idx = 0
     for orderbook, start_time in zip(orders, start_times):
         if start_time != -1:
-            draw_purchase_graph(orderbook, start_time, 1000, path, idx)
-            # print('{}th purchase graph was drawn'.format(idx))
+            draw_purchase_graph(orderbook, start_time, args.quantity, path, idx)
             idx += 1
 
 
 if __name__ == '__main__':
     args = argparser()
-    visualize(sys.argv[1], args)
+    visualize(args.vis_dir, args)
