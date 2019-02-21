@@ -147,7 +147,7 @@ function initHttpServer() {
                         "timestamp": getCurrentTimestamp()
                     });
 
-                    console.log(`${agentId} purchased ${amount} at ${stack}`);
+                    // console.log(`${agentId} purchased ${amount} at ${stack}`);
                     stack -= amount;
 
                     if (stack == 0 && timer != -1) {

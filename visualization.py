@@ -1,11 +1,14 @@
-import matplotlib
-
-matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
 import os
+import glob
+import json
 from arguments import argparser
+import matplotlib
+
+matplotlib.use('Agg')
+
 
 def draw_success_rate_graph(n_episode, window, success_rate, path):
     plt.plot(np.arange(n_episode) + window, success_rate, label='success_rate')
@@ -18,7 +21,7 @@ def draw_success_rate_graph(n_episode, window, success_rate, path):
         os.makedirs(middle_path)
     plt.savefig(os.path.join(middle_path, "success_rate.png"))
     plt.close()
-    print('drew success_rate_graph !')
+    # print('drew success_rate_graph !')
 
 
 def draw_dealtime_graph(n_episode, deal_time, path):
@@ -33,7 +36,7 @@ def draw_dealtime_graph(n_episode, deal_time, path):
     plt.savefig(os.path.join(middle_path, "deal_time.png"))
     plt.close()
 
-    print(os.path.join(middle_path, "deal_time.png") + 'is drawn')
+    # print(os.path.join(middle_path, "deal_time.png") + 'is drawn')
 
 
 def draw_purchase_graph(orderbook, start_time, quantity, path, idx):
@@ -59,14 +62,9 @@ def draw_purchase_graph(orderbook, start_time, quantity, path, idx):
     plt.close()
 
 
-import os
-import glob
-import json
-
-
 def visualize(path, args=None):
     json_files = glob.glob(os.path.join('logs', path, '*'))
-    print(json_files)
+    # print(json_files)
     success_rate = []
     deal_time = []
     orders = []
@@ -80,7 +78,7 @@ def visualize(path, args=None):
             start_times.append(data['startTime'])
 
     suc_rate = [np.mean(success_rate[i:i + 20]) for i in range(len(success_rate) - 20)]
-    print(suc_rate)
+    # print(suc_rate)
 
     draw_success_rate_graph(len(suc_rate), args.window, suc_rate, path)
     draw_dealtime_graph(len(deal_time), deal_time, path)
@@ -88,7 +86,7 @@ def visualize(path, args=None):
     for orderbook, start_time in zip(orders, start_times):
         if start_time != -1:
             draw_purchase_graph(orderbook, start_time, 1000, path, idx)
-            print('{}th purchase graph was drawn'.format(idx))
+            # print('{}th purchase graph was drawn'.format(idx))
             idx += 1
 
 

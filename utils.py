@@ -47,7 +47,7 @@ class MovingAverage:
         return self._avg
 
 
-def start(http_port, log_dir):
+def start(http_port):
     global URI
     URI = "http://localhost:{}".format(http_port)
 
