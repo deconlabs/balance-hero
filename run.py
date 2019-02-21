@@ -12,7 +12,7 @@ def run():
     args = argparser()
 
     path = utils.create_log_dir(sys.argv)
-    utils.start(args.http_port, args.log_dir)
+    utils.start(args.http_port)
 
     env = Env(args)
     agents = [Agent(args) for _ in range(args.n_agent)]
@@ -42,14 +42,14 @@ def run():
 
         if (idx + 1) % 20 == 0:
             print("=" * 80)
-            print("EPISODE {}: Avg. Success Rate / Time: {:.2}/{:.2}"
+            print("EPISODE {}: Avg. Success Rate / Time: {:.2} / {:.2}"
                   .format(idx + 1, np.mean(success_list), np.mean(time_list)))
             success_list.clear()
             time_list.clear()
             print("=" * 80)
 
     if args.visual:
-        visualize(path)
+        visualize(path, args)
     print("끝")
     utils.close()
 

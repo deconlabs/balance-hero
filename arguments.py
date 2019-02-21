@@ -48,8 +48,6 @@ def argparser():
 
     parser.add_argument('--http_port', type=str, default='3000',
                         help='서버가 이용할 포트')
-    parser.add_argument('--log_dir', type=str, default='logs',
-                        help='로그를 저장할 디렉토리')
 
     args = parser.parse_args()
     return args
