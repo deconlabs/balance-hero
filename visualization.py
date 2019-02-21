@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from scipy.interpolate import make_interp_spline
 import numpy as np
@@ -5,8 +7,6 @@ import os
 import glob
 import json
 from arguments import argparser
-import matplotlib
-matplotlib.use('Agg')
 
 
 def draw_success_rate_graph(n_episode, window, success_rate, path):
