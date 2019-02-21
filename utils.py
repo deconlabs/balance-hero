@@ -164,11 +164,12 @@ def create_log_dir(argv):
 
 
 def save_checkpoints(path, data, idx):
-    import time
-    t0 = time.time()
+    if not os.path.isdir('checkpoints'):
+        os.mkdir('checkpoints')
     checkpoint_path = os.path.join('checkpoints', path)
-    if not os.path.isdir(checkpoint_path):
-        os.makedirs(checkpoint_path, exist_ok=True)
+    if os.path.isdir(checkpoint_path):
+        shutil.rmtree(checkpoint_path)
+    os.mkdir(checkpoint_path)
     with open(os.path.join(checkpoint_path, '{}.pkl'.format(idx)), 'wb') as f:
         cPickle.dump(data, f)
 
@@ -176,8 +177,4 @@ def save_checkpoints(path, data, idx):
     if len(files) > 10:
         sorted_files = sorted(files, key=lambda x: int(x[:-4]))
         file_to_remove = os.path.join(checkpoint_path, sorted_files[0])
-        print(sorted_files)
-        print(file_to_remove)
         os.remove(file_to_remove)
-    t1 = time.time()
-    print("Checkpoint Saving Time: {:.2}s".format(t1 - t0))
