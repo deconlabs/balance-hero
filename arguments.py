@@ -5,21 +5,21 @@ def argparser():
     parser = argparse.ArgumentParser()
     parser.add_argument('--visual', type=bool, default=True,
                         help='물품 판매 수량')
-    parser.add_argument('--quantity', type=int, default=500,
+    parser.add_argument('--quantity', type=int, default=100,
                         help='물품 판매 수량')
     parser.add_argument('--price', type=float, default=1.0,
                         help='물품의 가격')
     parser.add_argument('--timer', type=float, default=3000,
                         help='딜 진행 시간')
-    parser.add_argument('--amount_bin_size', type=int, default=10,
+    parser.add_argument('--amount_bin_size', type=int, default=2,
                         help='최소 구매 단위')
-    parser.add_argument('--state_bin_size', type=int, default=50,
+    parser.add_argument('--state_bin_size', type=int, default=10,
                         help='state 단위')
-    parser.add_argument('--max_purchase_quantity', type=int, default=50,
+    parser.add_argument('--max_purchase_quantity', type=int, default=10,
                         help='최대 구매 수량')
     parser.add_argument('--n_agent', type=int, default=20,
                         help='에이전트 수')
-    parser.add_argument('--n_episode', type=int, default=10,
+    parser.add_argument('--n_episode', type=int, default=1000,
                         help='에피소드 수')
     parser.add_argument('--lr', type=float, default=0.01,
                         help='learning rate')

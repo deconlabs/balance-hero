@@ -5,7 +5,6 @@ import os
 import glob
 import json
 import matplotlib
-
 matplotlib.use('Agg')
 
 
@@ -14,7 +13,6 @@ def draw_success_rate_graph(n_episode, window, success_rate, path):
     plt.title("success_rate_recent20")
     plt.xlabel("Episodes")
     plt.ylabel("success_rate(%)")
-    plt.show()
 
     middle_path = os.path.join('images', path)
     if not os.path.exists(middle_path):
@@ -29,7 +27,6 @@ def draw_dealtime_graph(n_episode, deal_time, path):
     plt.title("deal_time_trend(ms)")
     plt.xlabel("Episodes")
     plt.ylabel("deal_time")
-    plt.show()
 
     middle_path = os.path.join('images', path)
     if not os.path.exists(middle_path):
@@ -65,7 +62,6 @@ def draw_purchase_graph(orderbook, start_time, quantity, path, idx):
 
 def visualize(path, args=None):
     json_files = glob.glob(os.path.join('logs', path, '*'))
-    print(json_files)
     success_rate = []
     deal_time = []
     orders = []

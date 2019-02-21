@@ -12,8 +12,6 @@ def run():
     args = argparser()
 
     path = utils.create_log_dir(sys.argv)
-    # print("path" , path)
-    # sys.exit()
     utils.start(args.http_port, args.log_dir)
 
     env = Env(args)

@@ -6,3 +6,4 @@ server/node_modules/
 *.xml
 *.iml
 logs/
+images/
