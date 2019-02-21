@@ -164,12 +164,8 @@ def create_log_dir(argv):
 
 
 def save_checkpoints(path, data, idx):
-    if not os.path.isdir('checkpoints'):
-        os.mkdir('checkpoints')
     checkpoint_path = os.path.join('checkpoints', path)
-    if os.path.isdir(checkpoint_path):
-        shutil.rmtree(checkpoint_path)
-    os.mkdir(checkpoint_path)
+    os.makedirs(checkpoint_path, exist_ok=True)
     with open(os.path.join(checkpoint_path, '{}.pkl'.format(idx)), 'wb') as f:
         cPickle.dump(data, f)
 
