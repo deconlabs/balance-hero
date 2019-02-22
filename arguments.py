@@ -4,9 +4,9 @@ import argparse
 def argparser():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--n_agent', type=int, default=100,
+    parser.add_argument('--n_agent', type=int, default=20,
                         help='에이전트 수')
-    parser.add_argument('--n_episode', type=int, default=40,
+    parser.add_argument('--n_episode', type=int, default=2300,
                         help='에피소드 수')
     parser.add_argument('--mechanism', type=int, default=1,
                         help='mechanism (0, 1, 2, ...) 추후 추가')  # 수정요망
@@ -18,21 +18,21 @@ def argparser():
     parser.add_argument('--commission_pool', type=float, default=200.0,
                         help='reserved pool for distributing commision')
 
-    parser.add_argument('--quantity', type=int, default=300,
+    parser.add_argument('--quantity', type=int, default=100,
                         help='물품 판매 수량')
     parser.add_argument('--price', type=float, default=1.0,
                         help='물품의 가격')
     parser.add_argument('--amount_bin_size', type=int, default=1,
                         help='최소 구매 단위')
-    parser.add_argument('--max_purchase_quantity', type=int, default=5,
+    parser.add_argument('--max_purchase_quantity', type=int, default=10,
                         help='최대 구매 수량')
 
-    parser.add_argument('--timer', type=float, default=20000,
+    parser.add_argument('--timer', type=float, default=3000,
                         help='딜 진행 시간')
 
     parser.add_argument('--state_bin_size', type=int, default=10,
                         help='state 단위')
-    parser.add_argument('--window', type=int, default=10,
+    parser.add_argument('--window', type=int, default=20,
                         help='State마다 저장되는 time의 moving mean window size')
 
     parser.add_argument('--q_eps_decay', type=float, default=0.998,

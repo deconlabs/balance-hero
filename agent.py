@@ -83,6 +83,8 @@ class Agent():
         if action == 0:
             return action
 
+        prev_action = action
+
         amount = action * self.amount_bin_size
 
         expected_benefit = avg_benefits[action]
@@ -101,6 +103,21 @@ class Agent():
                 action = 0
             else:
                 pass
+
+        diff = expected_benefit - expected_cost
+        chk_1 = "   "
+        if diff > 0:
+            chk_1 = " * "
+
+        chk_2 = "    "
+        if prev_action != action:
+            chk_2 = " <<<"
+
+        print("id {:03d}: B/C = {:05.2f}/{:05.2f}, diff: {:+06.2f},".format(self.id, expected_benefit, expected_cost, diff),
+              chk_1,
+              "prev_act: {:3d}, action: {:3d}".format(prev_action, action),
+              chk_2)
+
         return action
 
     def learn(self, state, action, reward, time):
