@@ -18,7 +18,7 @@ def draw_is_success_graph(n_episode, is_success, path):
     ax = sns.regplot(xx, yy, order=5, color=cmap(0), truncate=True)
 
     ax.plot(xx, yy, label='Success Rate', color=cmap(0), alpha=0.3)
-    ax.set_title("is_success_recent20")
+    ax.set_title("is_success_recent")
     ax.set_xlabel("Episodes")
     ax.set_ylabel("is_success")
 
@@ -145,7 +145,7 @@ def visualize(path, args=None):
     idx = 0
     for orderbook, start_time in zip(orders, start_times):
         # print(idx)
-        if start_time != -1 and is_success[idx]:
+        if start_time != -1 and deal_time[idx]!=0:
             # print(json_files[idx])
             draw_purchase_graph(orderbook, start_time, args.timer, path, idx)
             print('{}th purchase graph is drawn'.format(idx))
