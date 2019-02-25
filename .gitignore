@@ -8,3 +8,4 @@ server/node_modules/
 logs/
 images/
 checkpoints/
+venv/

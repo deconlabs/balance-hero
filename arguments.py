@@ -24,7 +24,7 @@ def argparser():
                         help='물품의 가격')
     parser.add_argument('--amount_bin_size', type=int, default=1,
                         help='최소 구매 단위')
-    parser.add_argument('--max_purchase_quantity', type=int, default=10,
+    parser.add_argument('--max_purchase_quantity', type=int, default=15,
                         help='최대 구매 수량')
 
     parser.add_argument('--timer', type=float, default=3000,

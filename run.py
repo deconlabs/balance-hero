@@ -49,7 +49,7 @@ def run():
             print("=" * 80)
 
         if (idx + 1) % args.checkpoint_interval == 0:
-            utils.save_checkpoints(path, agents, idx+1)
+            utils.save_checkpoints(path, agents, idx + 1)
 
     if args.visual:
         visualize(path, args)
