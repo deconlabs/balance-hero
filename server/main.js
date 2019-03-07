@@ -172,7 +172,8 @@ function initHttpServer() {
 
         var dealTime = 0;
         if (orders.length != 0) {
-            dealTime = orders[orders.length - 1]["timestamp"] - orders[0]["timestamp"]
+            // dealTime = orders[orders.length - 1]["timestamp"] - orders[0]["timestamp"]
+            dealTime = orders[orders.length - 1]["timestamp"] - startTime
         }
 
         fs.writeFileSync("../logs/" + path + getCurrentTimestamp().toString() + ".json",
