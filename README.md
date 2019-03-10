@@ -15,3 +15,8 @@
 - [ ] 에이전트 별 최대 구매 수량 제한 다르게 해볼까?
 - [ ] 하이퍼파라미터 튜닝
 - [ ] 주석
+
+## Usage
+- python run_mech{}.sh
+
+- python vis.sh
