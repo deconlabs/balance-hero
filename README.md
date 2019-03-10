@@ -17,6 +17,6 @@
 - [ ] 주석
 
 ## Usage
-- python run_mech{}.sh
+- bash run_mech{}.sh
 
-- python vis.sh
+- bash vis.sh
